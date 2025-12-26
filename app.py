@@ -161,7 +161,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- HTML DEL REPRODUCTOR PERSONALIZADO ---
+# --- HTML DEL REPRODUCTOR PERSONALIZADO (CON TEXTO EN MOVIMIENTO) ---
 music_player_html = """
 <!DOCTYPE html>
 <html>
@@ -182,17 +182,30 @@ music_player_html = """
         box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
     
+    /* --- ESTILO PARA EL TÍTULO EN MOVIMIENTO --- */
+    .title-wrapper {
+        width: 100%;
+        overflow: hidden; 
+        white-space: nowrap;
+        margin-bottom: 8px;
+        mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+        -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+    }
+
     .song-title {
+        display: inline-block;
         color: #D4AF37;
         font-size: 14px;
-        margin-bottom: 8px;
         font-weight: bold;
-        text-align: center;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        width: 100%;
+        padding-left: 100%; 
+        animation: scroll-left 15s linear infinite; 
     }
+
+    @keyframes scroll-left {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-100%); }
+    }
+    /* ------------------------------------------- */
     
     audio {
         width: 100%;
@@ -228,7 +241,10 @@ music_player_html = """
 <body>
 
 <div class="player-container">
-    <div class="song-title" id="songTitle">Cargando música... 🎵</div>
+    <div class="title-wrapper">
+        <div class="song-title" id="songTitle">Cargando música... 🎵</div>
+    </div>
+    
     <audio id="audioPlayer" controls autoplay>
         Tu navegador no soporta audio.
     </audio>
@@ -248,7 +264,7 @@ music_player_html = """
         { title: "😆 Algo random no cae mal jaja", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Party%20Tunes%20%20Brainrot%20Rap.mp3" },
         { title: "🍕 Parliamo italiano?", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Accidentally%20In%20Love%20-%20Counting%20Crows.mp3" },
         { title: "🩷 Te amo", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Alexander%20Acha%20-%20Te%20amo.mp3" },
-        { title: "🐞 Je, contigo siempre es una coincidencia, no?", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Alexander%20Acha%20-%20Te%20amo.mp3" }
+        { title: "🐞 Je, contigo siempre es una coincidencia milagrosa", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Party%20Tunes%20%20Brainrot%20Rap.mp3" }
     ];
 
     let currentTrack = 0;
@@ -262,7 +278,13 @@ music_player_html = """
         currentTrack = index;
         audio.src = playlist[currentTrack].src;
         titleLabel.innerText = "🎶 " + playlist[currentTrack].title;
-        audio.play().catch(e => console.log("Autoplay bloqueado por navegador hasta interactuar"));
+        
+        var playPromise = audio.play();
+        if (playPromise !== undefined) {
+            playPromise.then(_ => {}).catch(error => {
+                console.log("Autoplay bloqueado. Esperando interacción.");
+            });
+        }
     }
 
     function nextSong() {
