@@ -421,8 +421,8 @@ with col9:
 # 🧠 JUEGO DE MEMORIA: NUESTROS RECUERDOS 🧠
 # ==========================================
 
-st.markdown("<br><h3 style='text-align: center; color: #D4AF37;'>🧠 Encuentra los Pares: Nuestros Recuerdos 🧠</h3>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; font-size: 0.9em;'>Dale la vuelta a las cartas y encuentra los momentos gemelos. ¿Podrás desbloquearlos todos?</p>", unsafe_allow_html=True)
+st.markdown("<br><h3 style='text-align: center; color: #D4AF37;'>🧠 Hora de divertinos y pensa un poco :) 🧠</h3>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: 0.9em;'>Debes dar la vuelta a las cartas y encontrar los momentos gemelos. Crees poder encontrar todos? Buena suerte:D</p>", unsafe_allow_html=True)
 
 # 1. LISTA DE FOTOS PARA EL JUEGO (12 en total)
 all_memory_photos = [
