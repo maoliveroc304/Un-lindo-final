@@ -380,7 +380,7 @@ with col9:
     ), unsafe_allow_html=True)
 
 # ==========================================
-# 🎞️ CINTA DE FOTOS (SIN HUECOS + FLOTANTE REAL) 🎞️
+# 🎞️ CINTA DE FOTOS (MODO ACORDEÓN / EXPANDIBLE) 🎞️
 # ==========================================
 
 st.markdown("<br><h3 style='text-align: center; color: #D4AF37;'>🎞️ Un viaje por nuestros momentos 🎞️</h3>", unsafe_allow_html=True)
@@ -404,26 +404,26 @@ ancho_foto = 250
 ancho_total_track = cantidad_fotos * ancho_foto
 distancia_scroll = len(cinta_imagenes) * ancho_foto
 
-# 3. Generar HTML de imágenes
+# 3. Generar HTML de imágenes para la cinta
 html_imgs = ""
 for i, img_url in enumerate(full_list):
-    html_imgs += f'<div class="slide"><img src="{img_url}" onclick="openModal({i})" alt="Foto {i}"></div>'
+    html_imgs += f'<div class="slide"><img src="{img_url}" onclick="expandViewer({i})" alt="Foto {i}"></div>'
 
 js_img_list = str(full_list) 
 
-# 4. Inyección HTML/CSS/JS (TRUCO DEL BODY APPEND)
+# 4. Inyección HTML/CSS/JS
 cinta_html = f"""
 <style>
-    /* EL CARRUSEL (Altura fija y pequeña = SIN HUECO NEGRO) */
+    /* --- ESTILOS DE LA CINTA --- */
     .slider {{
-        height: 220px; /* Solo la altura necesaria para las fotos */
+        height: 200px;
         margin: auto;
         position: relative;
         width: 100%;
         display: flex;
         align-items: center;
         overflow: hidden;
-        margin-bottom: 20px; /* Pequeño margen antes del footer */
+        /* El margen inferior se ajustará dinámicamente */
     }}
     
     .slide-track {{
@@ -461,64 +461,61 @@ cinta_html = f"""
     
     .slide img:hover {{ transform: scale(1.1); }}
 
-    /* --- EL MODAL FLOTANTE --- */
-    #myModalOverlay {{
-        display: none; /* Oculto por defecto */
-        position: fixed;
-        z-index: 2147483647; /* Máximo Z-Index posible */
-        left: 0;
-        top: 0;
+    /* --- CONTENEDOR EXPANDIBLE (ACORDEÓN) --- */
+    #expandable-container {{
+        display: none; /* OCULTO POR DEFECTO (Cero espacio) */
         width: 100%;
-        height: 100%;
-        background-color: rgba(0,0,0,0.95);
-        backdrop-filter: blur(8px);
+        background-color: #111;
+        border-top: 2px solid #D4AF37;
+        border-bottom: 2px solid #D4AF37;
+        margin-top: 20px;
+        position: relative;
+        text-align: center;
+        padding: 20px 0;
+        transition: all 0.5s ease;
     }}
 
-    .modal-content-img {{
-        margin: auto;
-        display: block;
+    /* Imagen Grande */
+    #big-image {{
         max-width: 90%;
-        max-height: 90%;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%); /* Centrado perfecto */
-        border: 3px solid #D4AF37;
+        max-height: 500px;
         border-radius: 10px;
-        box-shadow: 0 0 40px rgba(212, 175, 55, 0.6);
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        display: block;
+        margin: 0 auto;
     }}
 
-    .close-btn {{
+    /* Botones de control */
+    .close-exp {{
         position: absolute;
-        top: 20px;
-        right: 40px;
-        color: #f1f1f1;
-        font-size: 50px;
+        top: 10px;
+        right: 20px;
+        color: #fff;
+        font-size: 30px;
         font-weight: bold;
         cursor: pointer;
-        z-index: 2147483648;
+        background: rgba(0,0,0,0.5);
+        padding: 0 10px;
+        border-radius: 5px;
     }}
+    
+    .close-exp:hover {{ color: #D4AF37; }}
 
-    .prev-btn, .next-btn {{
-        cursor: pointer;
+    .nav-btn {{
         position: absolute;
         top: 50%;
-        width: auto;
-        padding: 20px;
-        margin-top: -50px;
-        color: white;
-        font-weight: bold;
+        transform: translateY(-50%);
         font-size: 40px;
-        transition: 0.3s ease;
+        color: white;
+        cursor: pointer;
+        background: rgba(0,0,0,0.3);
+        padding: 10px;
         user-select: none;
-        background-color: rgba(0,0,0,0.3);
-        border-radius: 5px;
-        z-index: 2147483648;
     }}
-
-    .next-btn {{ right: 20px; }}
-    .prev-btn {{ left: 20px; }}
-    .prev-btn:hover, .next-btn:hover {{ background-color: #D4AF37; color: black; }}
+    
+    .nav-btn:hover {{ background: #D4AF37; color: black; }}
+    .prev-exp {{ left: 20px; }}
+    .next-exp {{ right: 20px; }}
 
 </style>
 
@@ -528,56 +525,46 @@ cinta_html = f"""
     </div>
 </div>
 
-<div id="myModalOverlay">
-  <span class="close-btn" onclick="closeModal()">&times;</span>
-  <img class="modal-content-img" id="imgExpanded">
-  <a class="prev-btn" onclick="changeSlide(-1)">&#10094;</a>
-  <a class="next-btn" onclick="changeSlide(1)">&#10095;</a>
+<div id="expandable-container">
+    <span class="close-exp" onclick="closeViewer()">&times;</span>
+    <div class="nav-btn prev-exp" onclick="changeBigImage(-1)">&#10094;</div>
+    <div class="nav-btn next-exp" onclick="changeBigImage(1)">&#10095;</div>
+    
+    <img id="big-image" src="" alt="Vista Previa">
 </div>
 
 <script>
-    var imagesList = {js_img_list};
-    var currentIndex = 0;
-    var modal = document.getElementById("myModalOverlay");
-    var modalImg = document.getElementById("imgExpanded");
+    var imgList = {js_img_list};
+    var currIdx = 0;
+    var container = document.getElementById("expandable-container");
+    var bigImg = document.getElementById("big-image");
 
-    // --- EL TRUCO MAESTRO ---
-    // Movemos el modal al "body" principal del documento para sacarlo de la caja de Streamlit
-    // Esto asegura que flote sobre TODO y no deje huecos.
-    document.body.appendChild(modal);
-
-    function openModal(index) {{
-        modal.style.display = "block";
-        currentIndex = index;
-        modalImg.src = imagesList[currentIndex];
-        document.body.style.overflow = "hidden"; // Bloquear scroll de la página
+    function expandViewer(index) {{
+        // 1. Mostrar el contenedor (ocupa espacio físico)
+        container.style.display = "block";
+        
+        // 2. Cargar imagen
+        currIdx = index;
+        bigImg.src = imgList[currIdx];
+        
+        // 3. Desplazamiento suave hacia la imagen para que se vea bien
+        container.scrollIntoView({{behavior: "smooth", block: "center"}});
     }}
 
-    function closeModal() {{
-        modal.style.display = "none";
-        document.body.style.overflow = "auto"; // Reactivar scroll
+    function closeViewer() {{
+        // Ocultar contenedor (el espacio desaparece)
+        container.style.display = "none";
     }}
 
-    function changeSlide(n) {{
-        currentIndex += n;
-        if (currentIndex >= imagesList.length) {{ currentIndex = 0; }}
-        if (currentIndex < 0) {{ currentIndex = imagesList.length - 1; }}
-        modalImg.src = imagesList[currentIndex];
-    }}
-    
-    // Cerrar con Escape
-    document.addEventListener('keydown', function(event) {{
-        if (event.key === "Escape") {{ closeModal(); }}
-    }});
-    
-    // Cerrar click fuera
-    window.onclick = function(event) {{
-        if (event.target == modal) {{ closeModal(); }}
+    function changeBigImage(n) {{
+        currIdx += n;
+        if (currIdx >= imgList.length) {{ currIdx = 0; }}
+        if (currIdx < 0) {{ currIdx = imgList.length - 1; }}
+        bigImg.src = imgList[currIdx];
     }}
 </script>
 """
 
-# Renderizamos
 st.markdown(cinta_html, unsafe_allow_html=True)
 
 # --- PIE DE PÁGINA ---
