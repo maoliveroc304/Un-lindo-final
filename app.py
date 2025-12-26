@@ -1,5 +1,7 @@
 import streamlit as st
 import streamlit.components.v1 as components
+import time
+import random
 
 # --- CONFIGURACIÓN DE PÁGINA ---
 st.set_page_config(
@@ -380,22 +382,165 @@ with col9:
     ), unsafe_allow_html=True)
 
 # ==========================================
-# 🎞️ CINTA DE FOTOS (VERSIÓN COMPACTA SIN HUECOS) 🎞️
+# 🧠 JUEGO DE MEMORIA: NUESTROS RECUERDOS 🧠
 # ==========================================
 
-# Título ajustado sin saltos de línea extra
+st.markdown("<br><h3 style='text-align: center; color: #D4AF37;'>🧠 Encuentra los Pares: Nuestros Recuerdos 🧠</h3>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: 0.9em;'>Dale la vuelta a las cartas y encuentra los momentos gemelos. ¿Podrás desbloquearlos todos?</p>", unsafe_allow_html=True)
+
+# 1. DEFINICIÓN DE TODAS LAS FOTOS DEL JUEGO (12 FOTOS TOTALES)
+# Basado en tus archivos de la carpeta /memoria
+all_memory_photos = [
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/1.jpg",
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/2.jpg",
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/3.jpg",
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/4.jpg",
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/5.jpg",
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/6.jpg",
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/7.png", # OJO: Es PNG
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/8.png", # OJO: Es PNG
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/9.jpg",
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/10.jpg",
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/11.jpg",
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/12.jpg"
+]
+
+# 2. INICIALIZACIÓN DE ESTADO (Session State)
+if 'memory_initialized' not in st.session_state:
+    st.session_state.memory_initialized = True
+    st.session_state.seen_photos = set() # Para rastrear qué fotos ya vio
+    st.session_state.game_over = False
+    st.session_state.current_deck = []
+    st.session_state.flipped = [] # Cartas volteadas temporalmente
+    st.session_state.matched = set() # Cartas ya encontradas (IDs)
+    st.session_state.moves = 0
+
+# Función para iniciar/reiniciar juego
+def init_game():
+    # Seleccionamos 6 fotos para esta ronda
+    # Prioridad: Fotos que NO se han visto
+    unseen = [p for p in all_memory_photos if p not in st.session_state.seen_photos]
+    
+    needed = 6
+    selection = []
+    
+    # Si hay suficientes no vistas, las usamos
+    if len(unseen) >= needed:
+        selection = random.sample(unseen, needed)
+    else:
+        # Si faltan, rellenamos con las ya vistas
+        selection = unseen + random.sample(list(st.session_state.seen_photos), needed - len(unseen))
+    
+    # Marcar estas como vistas
+    st.session_state.seen_photos.update(selection)
+    
+    # Crear el mazo (duplicar y barajar)
+    # Cada carta es un dict: {id, url}
+    deck_images = selection * 2
+    random.shuffle(deck_images)
+    
+    st.session_state.current_deck = [{"id": i, "url": url} for i, url in enumerate(deck_images)]
+    st.session_state.flipped = []
+    st.session_state.matched = set()
+    st.session_state.moves = 0
+    st.session_state.game_over = False
+
+# Si no hay mazo, crearlo
+if not st.session_state.current_deck:
+    init_game()
+
+# 3. LÓGICA DE JUEGO
+def handle_click(card_id):
+    # Si ya hay 2 volteadas y no son pares, resetearlas al hacer click en la tercera
+    if len(st.session_state.flipped) == 2:
+        st.session_state.flipped = []
+    
+    # Voltear la carta actual
+    st.session_state.flipped.append(card_id)
+    
+    # Chequear coincidencia
+    if len(st.session_state.flipped) == 2:
+        st.session_state.moves += 1
+        id1 = st.session_state.flipped[0]
+        id2 = st.session_state.flipped[1]
+        
+        # Buscar las URLs correspondientes
+        url1 = next(c['url'] for c in st.session_state.current_deck if c['id'] == id1)
+        url2 = next(c['url'] for c in st.session_state.current_deck if c['id'] == id2)
+        
+        if url1 == url2:
+            st.session_state.matched.add(id1)
+            st.session_state.matched.add(id2)
+            st.session_state.flipped = [] # Limpiar volteadas porque ya son matched
+            
+            # Verificar Victoria
+            if len(st.session_state.matched) == len(st.session_state.current_deck):
+                st.session_state.game_over = True
+                st.balloons() # ¡Efecto de celebración!
+
+# 4. INTERFAZ VISUAL (GRILLA)
+# Botón de reinicio manual
+col_info1, col_info2 = st.columns([3, 1])
+with col_info1:
+    # Mensaje de progreso
+    if len(st.session_state.seen_photos) < len(all_memory_photos):
+        st.caption(f"🕵️‍♂️ Aún quedan fotos nuevas por descubrir... ({len(st.session_state.seen_photos)}/{len(all_memory_photos)} vistas)")
+    else:
+        st.caption("✨ ¡Ya has desbloqueado todos los recuerdos de la colección!")
+
+with col_info2:
+    if st.button("🔄 Barajar de nuevo"):
+        init_game()
+        st.rerun()
+
+if st.session_state.game_over:
+    st.success(f"¡Ganaste! 🎉 Lo hiciste en {st.session_state.moves} intentos. Reiniciando con nuevas fotos...")
+    time.sleep(3) # Espera 3 segundos para celebrar
+    init_game()
+    st.rerun()
+
+# Renderizado de las cartas
+# Usamos columnas de 4 en 4 (Grid 4x3 para 12 cartas)
+cols = st.columns(4)
+for i, card in enumerate(st.session_state.current_deck):
+    # Definir qué mostrar
+    is_flipped = card['id'] in st.session_state.flipped
+    is_matched = card['id'] in st.session_state.matched
+    
+    with cols[i % 4]:
+        container = st.container()
+        if is_flipped or is_matched:
+            # MOSTRAR FOTO
+            st.image(card['url'], use_container_width=True)
+        else:
+            # MOSTRAR DORSO (BOTÓN)
+            # Usamos un botón que ocupa todo el ancho
+            if st.button("❤️", key=f"btn_{card['id']}", use_container_width=True):
+                handle_click(card['id'])
+                st.rerun()
+        
+        st.write("") # Espaciador vertical pequeño
+
+st.markdown("---")
+
+# ==========================================
+# 🎞️ CINTA DE FOTOS: TODOS NUESTROS MOMENTOS 🎞️
+# ==========================================
+
 st.markdown("<h3 style='text-align: center; color: #D4AF37; margin-top: 20px; margin-bottom: 0px;'>🎞️ Un viaje por nuestros momentos 🎞️</h3>", unsafe_allow_html=True)
 
-# 1. Lista de Imágenes
+# LISTA ACTUALIZADA CON TUS FOTOS DE LA CARPETA 'RULETA' (GITHUB RAW)
 cinta_imagenes = [
-    "https://images.unsplash.com/photo-1529619768328-e37af76c6fe5?w=600",
-    "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=600",
-    "https://images.unsplash.com/photo-1523438885200-e635ba2c371e?w=600",
-    "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=600", 
-    "https://images.unsplash.com/photo-1543589077-47d81606c1bf?w=600",
-    "https://images.unsplash.com/photo-1512474932049-78ac69ede12c?w=600",
-    "https://images.unsplash.com/photo-1623945202652-327c59c5d72a?w=600",
-    "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600"
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/ruleta/R1.png",
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/ruleta/R2.png",
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/ruleta/R3.png",
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/ruleta/R4.png",
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/ruleta/R5.png",
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/ruleta/R6.png",
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/ruleta/R7.png",
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/ruleta/R8.png",
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/ruleta/R9.png",
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/ruleta/R10.png"
 ]
 
 # 2. Cálculos Python
