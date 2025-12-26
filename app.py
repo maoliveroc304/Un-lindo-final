@@ -312,7 +312,7 @@ with col1:
 with col2:
     st.markdown(crear_tarjeta_html(
         "card2",
-        "https://images.unsplash.com/photo-1513205770146-2f168f2379d7?w=600",
+        "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/Humor_rotisimo.png",
         "Tenemos el humor más roto",
         "Podemos reírnos de nuestras locuras, de nuestras normalidades y de todo. Tu sonrisa era mi mayor regalo."
     ), unsafe_allow_html=True)
@@ -320,7 +320,7 @@ with col2:
 with col3:
     st.markdown(crear_tarjeta_html(
         "card3",
-        "https://images.unsplash.com/photo-1472120435266-53107fd0c44a?w=600",
+        "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/Atardeceres.png",
         "Los atardeceres",
         "Siempre guardaré en mi memoria los muchos atardeceres que nos enviamos, y donde podíamos sentirnos cerca sólo con mirar el horizonte."
     ), unsafe_allow_html=True)
@@ -331,7 +331,7 @@ col4, col5, col6 = st.columns(3)
 with col4:
     st.markdown(crear_tarjeta_html(
         "card4",
-        "https://images.unsplash.com/photo-1632501641765-e568d28b0015?w=600",
+        "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/Nuestros_juegos.png",
         "Nuestros juegos",
         "Jaja, hicimos un poco de todo, no? desde lindos dibujos, partidas épicas de Monopoly, hasta mis humillaciones en Plato :v"
     ), unsafe_allow_html=True)
@@ -339,7 +339,7 @@ with col4:
 with col5:
     st.markdown(crear_tarjeta_html(
         "card5",
-        "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600",
+        "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/Formas_llamarnos.jpg",
         "Formas de llamarnos",
         "Cajita de sorpresas, mi tralalera, mi gran y lindo amor, el amor de mi vida, y mi más hermosa coincidencia."
     ), unsafe_allow_html=True)
@@ -347,7 +347,7 @@ with col5:
 with col6:
     st.markdown(crear_tarjeta_html(
         "card6",
-        "https://images.unsplash.com/photo-1518133835878-5a93cc3f89e5?w=600",
+        "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/Llama_llama_llamas.png",
         "Llama a la llama en llamas",
         "No necesita más explicación :v"
     ), unsafe_allow_html=True)
@@ -358,7 +358,7 @@ col7, col8, col9 = st.columns(3)
 with col7:
     st.markdown(crear_tarjeta_html(
         "card7",
-        "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=600",
+        "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/Unica_pelicula.jpg",
         "La única peli que vimos",
         "Aún tengo el pendiente de ir al cine algún día contigo, y te aseguro que será toda una experiencia :)"
     ), unsafe_allow_html=True)
@@ -366,7 +366,7 @@ with col7:
 with col8:
     st.markdown(crear_tarjeta_html(
         "card8",
-        "https://images.unsplash.com/photo-1623945202652-327c59c5d72a?w=600",
+        "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/La_promesa.jpg",
         "La promesa de amarnos",
         "El destino se encargó de encontrarnos y te prometo que será este destino el que nos volverá a juntar."
     ), unsafe_allow_html=True)
@@ -374,7 +374,7 @@ with col8:
 with col9:
     st.markdown(crear_tarjeta_html(
         "card9",
-        "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=600",
+        "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/Amo_amarte.jpg",
         "Amo amarte",
         "Gracias por amarme como lo hiciste cada día, y por haberme hecho sentir cómo es amar a alguien con toda el alma."
     ), unsafe_allow_html=True)
