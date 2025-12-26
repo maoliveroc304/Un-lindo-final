@@ -43,16 +43,76 @@ st.markdown("""
 
     /* 3. FLIP CARD Y VIDEO */
     input[type=checkbox] { display: none; }
-    .card-container { perspective: 1000px; width: 300px; height: 400px; margin: auto; margin-bottom: 30px; cursor: pointer; display: block; position: relative; }
-    .card-flip-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.8s; transform-style: preserve-3d; box-shadow: 0 4px 8px 0 rgba(255,215,0,0.2); border-radius: 15px; }
+    
+    .card-container { 
+        perspective: 1000px; 
+        width: 300px; 
+        height: 400px; 
+        margin: auto; 
+        margin-bottom: 30px; 
+        cursor: pointer; 
+        display: block; 
+        position: relative; 
+    }
+    
+    .card-flip-inner { 
+        position: relative; 
+        width: 100%; 
+        height: 100%; 
+        text-align: center; 
+        transition: transform 0.8s; 
+        transform-style: preserve-3d; 
+        box-shadow: 0 4px 8px 0 rgba(255,215,0,0.2); 
+        border-radius: 15px; 
+    }
+    
     input:checked + .card-container .card-flip-inner { transform: rotateY(180deg); }
+    
     @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 10% { transform: translate(-1px, -2px) rotate(-1deg); } 20% { transform: translate(-3px, 0px) rotate(1deg); } 30% { transform: translate(3px, 2px) rotate(0deg); } 40% { transform: translate(1px, -1px) rotate(1deg); } 50% { transform: translate(-1px, 2px) rotate(-1deg); } 60% { transform: translate(-3px, 1px) rotate(0deg); } 70% { transform: translate(3px, 1px) rotate(-1deg); } 80% { transform: translate(-1px, -1px) rotate(1deg); } 90% { transform: translate(1px, 2px) rotate(0deg); } 100% { transform: translate(1px, -2px) rotate(-1deg); } }
+    
     .card-container:hover .card-flip-inner { animation: shake 0.5s; animation-iteration-count: infinite; }
     input:checked + .card-container:hover .card-flip-inner { animation: none; }
-    .flip-front, .flip-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 15px; top: 0; left: 0; }
-    .flip-front { background-color: #222; color: black; z-index: 2; transform: rotateY(0deg); }
-    .flip-front img { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; display: block; }
-    .flip-back { background-color: #2c2c2c; color: #D4AF37; transform: rotateY(180deg); z-index: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; border: 2px solid #D4AF37; }
+    
+    .flip-front, .flip-back { 
+        position: absolute; 
+        width: 100%; 
+        height: 100%; 
+        -webkit-backface-visibility: hidden; 
+        backface-visibility: hidden; 
+        border-radius: 15px; 
+        top: 0; 
+        left: 0; 
+    }
+    
+    .flip-front { 
+        background-color: #222; 
+        color: black; 
+        z-index: 2; 
+        transform: rotateY(0deg); 
+    }
+    
+    .flip-front img { 
+        width: 100%; 
+        height: 100%; 
+        object-fit: cover; 
+        border-radius: 15px; 
+        display: block; 
+    }
+    
+    /* AQUÍ ESTÁ LA CORRECCIÓN CLAVE */
+    .flip-back { 
+        background-color: #2c2c2c; 
+        color: #D4AF37; 
+        transform: rotateY(180deg); 
+        z-index: 1; 
+        display: flex; 
+        flex-direction: column; 
+        justify-content: center; 
+        align-items: center; 
+        text-align: center; /* <-- ESTO ASEGURA QUE EL TEXTO ESTÉ CENTRADO */
+        padding: 20px; 
+        border: 2px solid #D4AF37; 
+    }
 
     /* Centrar cosas verticalmente en columnas */
     div[data-testid="stColumn"] {
@@ -64,7 +124,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- HTML DEL REPRODUCTOR PERSONALIZADO ---
-# Aquí es donde ocurre la magia. Javascript puro para controlar el audio y CSS para el diseño.
 music_player_html = """
 <!DOCTYPE html>
 <html>
@@ -72,7 +131,6 @@ music_player_html = """
 <style>
     body { margin: 0; padding: 0; background-color: transparent; font-family: 'Montserrat', sans-serif; overflow: hidden;}
     
-    /* Contenedor del Player estilo Cristal Oscuro */
     .player-container {
         background: rgba(44, 44, 44, 0.9);
         border: 1px solid #D4AF37;
@@ -98,7 +156,6 @@ music_player_html = """
         width: 100%;
     }
     
-    /* Controles de audio nativos pero estilizados con filtro */
     audio {
         width: 100%;
         height: 30px;
@@ -106,7 +163,6 @@ music_player_html = """
         outline: none;
     }
     
-    /* Botones extra */
     .controls {
         display: flex;
         justify-content: space-between;
@@ -145,7 +201,6 @@ music_player_html = """
 </div>
 
 <script>
-    // --- LISTA DE CANCIONES (URLs DE EJEMPLO, CAMBIAR POR LAS TUYAS) ---
     const playlist = [
         { title: "💑 Nuestra Canción Especial", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Kygo%20-%20Firestone%20ft.%20Conrad%20Sewell.mp3" },
         { title: "🐱 Jaja, muchos recuerdos", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Yung%20Kai%20ft%20Oiia%20Cat%20-%20Blue.mp3" },
@@ -159,7 +214,6 @@ music_player_html = """
     const audio = document.getElementById('audioPlayer');
     const titleLabel = document.getElementById('songTitle');
 
-    // Función para cargar canción
     function loadSong(index) {
         if (index < 0) index = playlist.length - 1;
         if (index >= playlist.length) index = 0;
@@ -170,7 +224,6 @@ music_player_html = """
         audio.play().catch(e => console.log("Autoplay bloqueado por navegador hasta interactuar"));
     }
 
-    // Controles
     function nextSong() {
         loadSong(currentTrack + 1);
     }
@@ -179,12 +232,10 @@ music_player_html = """
         loadSong(currentTrack - 1);
     }
 
-    // Evento: Cuando termina una canción, pasa a la siguiente
     audio.addEventListener('ended', nextSong);
 
-    // Iniciar
     window.onload = () => {
-        loadSong(0); // Cargar primera canción
+        loadSong(0); 
     };
 </script>
 
@@ -199,7 +250,6 @@ st.markdown("""<div class="snowflakes" aria-hidden="true"><div class="snowflake"
 # 🎵 CABECERA + REPRODUCTOR 🎵
 # ==========================================
 
-# Usamos columnas: Título a la Izquierda, Reproductor a la Derecha
 col_text, col_player = st.columns([3, 1.2])
 
 with col_text:
@@ -207,20 +257,17 @@ with col_text:
     st.markdown("<p style='text-align: left; font-size: 1.1em;'>Una colección de momentos que brillan e iluminaron tanto mi corazón, que los recordaré por siempre<3<br><i>(Haz clic en las fotos para descubrir el mensaje secreto)</i></p>", unsafe_allow_html=True)
 
 with col_player:
-    # Insertamos el reproductor HTML personalizado
-    # height=120 es suficiente para mostrar controles y título sin ocupar mucho espacio
     components.html(music_player_html, height=130)
 
 st.markdown("---")
 
 # ==========================================
-# 🎥 VIDEO CENTRAL (SEPARADO) 🎥
+# 🎥 VIDEO CENTRAL 🎥
 # ==========================================
 col_vid1, col_vid2, col_vid3 = st.columns([1, 2, 1])
 
 with col_vid2:
     st.markdown("<h3 style='margin-bottom: 10px; text-align: center;'>🎥 Nuestro Mensaje de Amor</h3>", unsafe_allow_html=True)
-    # --- CAMBIA ESTE LINK POR TU VIDEO REAL ---
     video_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ" 
     st.video(video_url)
     st.markdown("<p style='text-align: center; font-size: 0.9em; margin-top: 5px;'>Dale play al video para ver la dedicatoria visual 🎬</p>", unsafe_allow_html=True)
@@ -232,6 +279,7 @@ st.markdown("<br>", unsafe_allow_html=True)
 # ==========================================
 
 def crear_tarjeta_html(id_unico, imagen_url, titulo, descripcion):
+    # HE AGREGADO text-align: center EXPLÍCITAMENTE EN EL H3 Y EL P TAMBIÉN POR SEGURIDAD
     return f"""
     <div style="margin-top: 20px; margin-bottom: 20px;">
         <input type="checkbox" id="{id_unico}">
@@ -241,8 +289,8 @@ def crear_tarjeta_html(id_unico, imagen_url, titulo, descripcion):
                     <img src="{imagen_url}" alt="Foto">
                 </div>
                 <div class="flip-back">
-                    <h3 style="font-size: 1.2em;">{titulo}</h3>
-                    <p style="font-size: 0.9em; padding: 0 10px;">{descripcion}</p>
+                    <h3 style="font-size: 1.2em; text-align: center; margin-bottom: 10px;">{titulo}</h3>
+                    <p style="font-size: 0.9em; padding: 0 10px; text-align: center;">{descripcion}</p>
                     <p>❤️</p>
                 </div>
             </div>
@@ -256,7 +304,7 @@ col1, col2, col3 = st.columns(3)
 with col1:
     st.markdown(crear_tarjeta_html(
         "card1",
-        "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600", # Música/Conexión
+        "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600",
         "Las canciones",
         "Fueron nuestro lenguaje de amor, nuestra forma de demostrar esta hermosa conexión."
     ), unsafe_allow_html=True)
@@ -264,7 +312,7 @@ with col1:
 with col2:
     st.markdown(crear_tarjeta_html(
         "card2",
-        "https://images.unsplash.com/photo-1513205770146-2f168f2379d7?w=600", # Risas/Pareja
+        "https://images.unsplash.com/photo-1513205770146-2f168f2379d7?w=600",
         "Tenemos el humor más roto",
         "Podemos reírnos de nuestras locuras, de nuestras normalidades y de todo. Tu sonrisa era mi mayor regalo."
     ), unsafe_allow_html=True)
@@ -272,7 +320,7 @@ with col2:
 with col3:
     st.markdown(crear_tarjeta_html(
         "card3",
-        "https://images.unsplash.com/photo-1472120435266-53107fd0c44a?w=600", # Atardecer
+        "https://images.unsplash.com/photo-1472120435266-53107fd0c44a?w=600",
         "Los atardeceres",
         "Siempre guardaré en mi memoria los muchos atardeceres que nos enviamos, y donde podíamos sentirnos cerca sólo con mirar el horizonte."
     ), unsafe_allow_html=True)
@@ -283,7 +331,7 @@ col4, col5, col6 = st.columns(3)
 with col4:
     st.markdown(crear_tarjeta_html(
         "card4",
-        "https://images.unsplash.com/photo-1632501641765-e568d28b0015?w=600", # Juegos/Monopoly
+        "https://images.unsplash.com/photo-1632501641765-e568d28b0015?w=600",
         "Nuestros juegos",
         "Jaja, hicimos un poco de todo, no? desde lindos dibujos, partidas épicas de Monopoly, hasta mis humillaciones en Plato :v"
     ), unsafe_allow_html=True)
@@ -291,7 +339,7 @@ with col4:
 with col5:
     st.markdown(crear_tarjeta_html(
         "card5",
-        "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600", # Caja Sorpresa/Regalo/Amor
+        "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600",
         "Formas de llamarnos",
         "Cajita de sorpresas, mi tralalera, mi gran y lindo amor, el amor de mi vida, y mi más hermosa coincidencia."
     ), unsafe_allow_html=True)
@@ -299,7 +347,7 @@ with col5:
 with col6:
     st.markdown(crear_tarjeta_html(
         "card6",
-        "https://images.unsplash.com/photo-1518133835878-5a93cc3f89e5?w=600", # Llama graciosa
+        "https://images.unsplash.com/photo-1518133835878-5a93cc3f89e5?w=600",
         "Llama a la llama en llamas",
         "No necesita más explicación :v"
     ), unsafe_allow_html=True)
@@ -310,7 +358,7 @@ col7, col8, col9 = st.columns(3)
 with col7:
     st.markdown(crear_tarjeta_html(
         "card7",
-        "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=600", # Cine
+        "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=600",
         "La única peli que vimos",
         "Aún tengo el pendiente de ir al cine algún día contigo, y te aseguro que será toda una experiencia :)"
     ), unsafe_allow_html=True)
@@ -318,7 +366,7 @@ with col7:
 with col8:
     st.markdown(crear_tarjeta_html(
         "card8",
-        "https://images.unsplash.com/photo-1623945202652-327c59c5d72a?w=600", # Promesa/Manos juntas
+        "https://images.unsplash.com/photo-1623945202652-327c59c5d72a?w=600",
         "La promesa de amarnos",
         "El destino se encargó de encontrarnos y te prometo que será este destino el que nos volverá a juntar."
     ), unsafe_allow_html=True)
@@ -326,7 +374,7 @@ with col8:
 with col9:
     st.markdown(crear_tarjeta_html(
         "card9",
-        "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=600", # Corazones/Amor puro
+        "https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=600",
         "Amo amarte",
         "Gracias por amarme como lo hiciste cada día, y por haberme hecho sentir cómo es amar a alguien con toda el alma."
     ), unsafe_allow_html=True)
