@@ -262,9 +262,9 @@ music_player_html = """
         { title: "🕒 Soñemos juntos, por siempre, mi amor", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Amor%20De%20Papel%20-%20Jorge%20Cuellar.mp3" },
         { title: "🏡 Eres mi hogar", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Edith%20Whiskers%20-%20Home.mp3" },
         { title: "😆 Algo random no cae mal jaja", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Party%20Tunes%20%20Brainrot%20Rap.mp3" },
-        { title: "🍕 Parliamo italiano?", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Accidentally%20In%20Love%20-%20Counting%20Crows.mp3" },
+        { title: "🍕 Parliamo italiano?", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Tutto%20per%20me%20-%20Michele%20Merlo.mp3" },
         { title: "🩷 Te amo", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Alexander%20Acha%20-%20Te%20amo.mp3" },
-        { title: "🐞 Je, contigo siempre es una coincidencia :)", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Alexander%20Acha%20-%20Te%20amo.mp3" }
+        { title: "🐞 Je, contigo siempre es una coincidencia :)", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Accidentally%20In%20Love%20-%20Counting%20Crows.mp3" }
     ];
 
     let currentTrack = 0;
