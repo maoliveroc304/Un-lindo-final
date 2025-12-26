@@ -7,57 +7,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# ==========================================
-# 🎵 NUEVO CÓDIGO: REPRODUCTOR EN SIDEBAR 🎵
-# ==========================================
-with st.sidebar:
-    st.header("📻 Playlist de Amor")
-    
-    # 1. Diccionario de canciones (Nombre : Link de YouTube)
-    # ¡Pon aquí las canciones que le gusten a ella!
-    playlist = {
-        "Nuestra Canción Especial": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", 
-        "All I Want for Christmas": "https://www.youtube.com/watch?v=yXQViqx6GMY",
-        "Perfect - Ed Sheeran": "https://www.youtube.com/watch?v=2Vv-BfVoq4g",
-        "Lover - Taylor Swift": "https://www.youtube.com/watch?v=-BjZmE2gtdo"
-    }
-    
-    # Convertimos las claves a una lista para poder navegar por índice
-    song_list = list(playlist.keys())
-
-    # 2. Gestión del Estado (Para que funcione el botón Siguiente)
-    if 'current_song_index' not in st.session_state:
-        st.session_state.current_song_index = 0
-
-    # Función para pasar a la siguiente
-    def next_song():
-        # Si llegamos al final, volvemos al principio (bucle)
-        st.session_state.current_song_index = (st.session_state.current_song_index + 1) % len(song_list)
-
-    # 3. Selector de canción (La lista desplegable)
-    # Vinculamos el selectbox al índice guardado en session_state
-    selected_song = st.selectbox(
-        "Selecciona una canción:",
-        song_list,
-        index=st.session_state.current_song_index,
-        key='song_selector' # Clave interna para que Streamlit sepa cuál es
-    )
-
-    # Actualizamos el índice si el usuario cambia manualmnete la lista
-    if selected_song != song_list[st.session_state.current_song_index]:
-         st.session_state.current_song_index = song_list.index(selected_song)
-
-    # 4. El Reproductor (Muestra el video de la canción seleccionada)
-    st.video(playlist[selected_song])
-
-    # 5. Botón de Siguiente
-    if st.button("⏭️ Siguiente Canción", on_click=next_song):
-        pass # La magia ocurre en la función on_click
-
-    st.markdown("---")
-    st.markdown("*Dedicado para ti, mi amor.*")
-
-# --- CSS PERSONALIZADO (CORREGIDO) ---
+# --- CSS PERSONALIZADO ---
 st.markdown("""
 <style>
     /* 1. ESTILOS GENERALES */
@@ -67,10 +17,17 @@ st.markdown("""
         background-size: 20px 20px;
     }
     
-    h1, h2, h3 {
+    h1 {
         color: #D4AF37 !important;
         font-family: 'Playfair Display', serif;
-        text-align: center;
+        text-align: left; /* Título alineado a la izquierda */
+        font-size: 3.5rem !important;
+        margin-top: 0px;
+    }
+    
+    h3 {
+        color: #D4AF37 !important;
+        font-family: 'Playfair Display', serif;
     }
     
     p, div {
@@ -78,146 +35,86 @@ st.markdown("""
         font-family: 'Montserrat', sans-serif;
     }
 
-    /* 2. EFECTO DE NIEVE */
-    .snowflake {
-        color: #fff;
-        font-size: 1em;
-        font-family: Arial;
-        text-shadow: 0 0 1px #000;
-    }
+    /* 2. EFECTO NIEVE (Mismo de antes) */
+    .snowflake { color: #fff; font-size: 1em; font-family: Arial; text-shadow: 0 0 1px #000; }
     @-webkit-keyframes snowflakes-fall{0%{top:-10%}100%{top:100%}}
     @-webkit-keyframes snowflakes-shake{0%{-webkit-transform:translateX(0px);transform:translateX(0px)}50%{-webkit-transform:translateX(80px);transform:translateX(80px)}100%{-webkit-transform:translateX(0px);transform:translateX(0px)}}
     .snowflake{position:fixed;top:-10%;z-index:9999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;cursor:default;-webkit-animation-name:snowflakes-fall,snowflakes-shake;-webkit-animation-duration:10s,3s;-webkit-animation-timing-function:linear,ease-in-out;-webkit-animation-iteration-count:infinite,infinite;-webkit-animation-play-state:running,running}.snowflake:nth-of-type(0){left:1%;-webkit-animation-delay:0s,0s}.snowflake:nth-of-type(1){left:10%;-webkit-animation-delay:1s,1s}.snowflake:nth-of-type(2){left:20%;-webkit-animation-delay:6s,.5s}.snowflake:nth-of-type(3){left:30%;-webkit-animation-delay:4s,2s}.snowflake:nth-of-type(4){left:40%;-webkit-animation-delay:2s,2s}.snowflake:nth-of-type(5){left:50%;-webkit-animation-delay:8s,3s}.snowflake:nth-of-type(6){left:60%;-webkit-animation-delay:6s,2s}.snowflake:nth-of-type(7){left:70%;-webkit-animation-delay:2.5s,1s}.snowflake:nth-of-type(8){left:80%;-webkit-animation-delay:1s,0s}.snowflake:nth-of-type(9){left:90%;-webkit-animation-delay:3s,1.5s}
 
-    /* 3. FLIP CARD CON CHECKBOX HACK */
-    
-    /* Ocultamos el checkbox real */
-    input[type=checkbox] {
-        display: none;
-    }
+    /* 3. FLIP CARD Y VIDEO (Mismos estilos de antes...) */
+    input[type=checkbox] { display: none; }
+    .card-container { perspective: 1000px; width: 300px; height: 400px; margin: auto; margin-bottom: 30px; cursor: pointer; display: block; position: relative; }
+    .card-flip-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.8s; transform-style: preserve-3d; box-shadow: 0 4px 8px 0 rgba(255,215,0,0.2); border-radius: 15px; }
+    input:checked + .card-container .card-flip-inner { transform: rotateY(180deg); }
+    @keyframes shake { 0% { transform: translate(1px, 1px) rotate(0deg); } 10% { transform: translate(-1px, -2px) rotate(-1deg); } 20% { transform: translate(-3px, 0px) rotate(1deg); } 30% { transform: translate(3px, 2px) rotate(0deg); } 40% { transform: translate(1px, -1px) rotate(1deg); } 50% { transform: translate(-1px, 2px) rotate(-1deg); } 60% { transform: translate(-3px, 1px) rotate(0deg); } 70% { transform: translate(3px, 1px) rotate(-1deg); } 80% { transform: translate(-1px, -1px) rotate(1deg); } 90% { transform: translate(1px, 2px) rotate(0deg); } 100% { transform: translate(1px, -2px) rotate(-1deg); } }
+    .card-container:hover .card-flip-inner { animation: shake 0.5s; animation-iteration-count: infinite; }
+    input:checked + .card-container:hover .card-flip-inner { animation: none; }
+    .flip-front, .flip-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 15px; top: 0; left: 0; }
+    .flip-front { background-color: #222; color: black; z-index: 2; transform: rotateY(0deg); }
+    .flip-front img { width: 100%; height: 100%; object-fit: cover; border-radius: 15px; display: block; }
+    .flip-back { background-color: #2c2c2c; color: #D4AF37; transform: rotateY(180deg); z-index: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; border: 2px solid #D4AF37; }
 
-    /* Contenedor Label */
-    .card-container {
-        perspective: 1000px;
-        width: 300px;
-        height: 400px;
-        margin: auto;
-        margin-bottom: 30px;
-        cursor: pointer;
-        display: block; /* Asegura que se comporte como bloque */
-        position: relative;
+    /* 4. ESTILO DEL REPRODUCTOR MINIIMALISTA */
+    .stSelectbox label { color: #D4AF37 !important; } /* Color etiqueta */
+    div[data-testid="stColumn"] {
+        vertical-align: middle; /* Alinear verticalmente las columnas */
     }
-
-    /* El cuerpo que gira */
-    .card-flip-inner {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        text-align: center;
-        transition: transform 0.8s;
-        transform-style: preserve-3d;
-        box-shadow: 0 4px 8px 0 rgba(255,215,0,0.2);
-        border-radius: 15px;
-    }
-
-    /* ESTADO: CUANDO EL CHECKBOX ESTÁ MARCADO (CLIC) -> GIRAR */
-    input:checked + .card-container .card-flip-inner {
-        transform: rotateY(180deg);
-    }
-
-    /* ANIMACIÓN DE TEMBLOR (SOLO SI NO ESTÁ GIRADA) */
-    @keyframes shake {
-        0% { transform: translate(1px, 1px) rotate(0deg); }
-        10% { transform: translate(-1px, -2px) rotate(-1deg); }
-        20% { transform: translate(-3px, 0px) rotate(1deg); }
-        30% { transform: translate(3px, 2px) rotate(0deg); }
-        40% { transform: translate(1px, -1px) rotate(1deg); }
-        50% { transform: translate(-1px, 2px) rotate(-1deg); }
-        60% { transform: translate(-3px, 1px) rotate(0deg); }
-        70% { transform: translate(3px, 1px) rotate(-1deg); }
-        80% { transform: translate(-1px, -1px) rotate(1deg); }
-        90% { transform: translate(1px, 2px) rotate(0deg); }
-        100% { transform: translate(1px, -2px) rotate(-1deg); }
-    }
-
-    /* Temblor al pasar mouse (solo si no está girada) */
-    .card-container:hover .card-flip-inner {
-        animation: shake 0.5s;
-        animation-iteration-count: infinite;
-    }
-    
-    input:checked + .card-container:hover .card-flip-inner {
-        animation: none;
-    }
-
-    /* CARAS DE LA TARJETA - CORRECCIÓN DE VISIBILIDAD */
-    .flip-front, .flip-back {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        -webkit-backface-visibility: hidden;
-        backface-visibility: hidden;
-        border-radius: 15px;
-        top: 0;
-        left: 0;
-    }
-
-    /* FRENTE (FOTO) */
-    .flip-front {
-        background-color: #222; /* Fondo por si la imagen tarda */
-        color: black;
-        z-index: 2; /* IMPORTANTE: Esto fuerza a la foto a estar ARRIBA */
-        transform: rotateY(0deg);
-    }
-
-    .flip-front img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 15px;
-        display: block; /* Asegura que la imagen ocupe el espacio */
-    }
-
-    /* DORSO (TEXTO) */
-    .flip-back {
-        background-color: #2c2c2c;
-        color: #D4AF37;
-        transform: rotateY(180deg);
-        z-index: 1; /* Está debajo inicialmente */
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-        border: 2px solid #D4AF37;
-    }
-    
 </style>
 """, unsafe_allow_html=True)
 
 # --- EFECTO NIEVE ---
-st.markdown("""
-<div class="snowflakes" aria-hidden="true">
-  <div class="snowflake">❅</div><div class="snowflake">❅</div><div class="snowflake">❆</div>
-  <div class="snowflake">❄</div><div class="snowflake">❅</div><div class="snowflake">❆</div>
-  <div class="snowflake">❄</div><div class="snowflake">❅</div><div class="snowflake">❆</div>
-  <div class="snowflake">❄</div>
-</div>
-""", unsafe_allow_html=True)
+st.markdown("""<div class="snowflakes" aria-hidden="true"><div class="snowflake">❅</div><div class="snowflake">❅</div><div class="snowflake">❆</div><div class="snowflake">❄</div><div class="snowflake">❅</div><div class="snowflake">❆</div><div class="snowflake">❄</div><div class="snowflake">❅</div><div class="snowflake">❆</div><div class="snowflake">❄</div></div>""", unsafe_allow_html=True)
 
-# --- TÍTULO PRINCIPAL ---
-st.markdown("<h1>✨ Nuestra Historia: Edición Navidad ✨</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center;'>Una colección de momentos que brillan tanto como tú.<br><i>(Haz clic en las fotos para descubrir el mensaje secreto)</i></p>", unsafe_allow_html=True)
+# ==========================================
+# 🎵 CABECERA CON REPRODUCTOR A LA DERECHA 🎵
+# ==========================================
 
-# --- SECCIÓN DE VIDEO ---
-col_vid1, col_vid2, col_vid3 = st.columns([1, 2, 1]) 
+# Creamos dos columnas: Izquierda (Grande) para título, Derecha (Pequeña) para Audio
+col_header_text, col_header_music = st.columns([3, 1])
 
-with col_vid2:
-    st.markdown("<h3 style='margin-bottom: 10px;'>🎥 Nuestro Mensaje de Amor</h3>", unsafe_allow_html=True)
-    # IMPORTANTE: Reemplaza este link por tu video real
-    video_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ" 
-    st.video(video_url)
-    st.markdown("<p style='text-align: center; font-size: 0.9em;'>Dale play para ambientar nuestra historia 🎵</p>", unsafe_allow_html=True)
+with col_header_text:
+    st.markdown("<h1>✨ Nuestra Historia: Edición Navidad ✨</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: left; font-size: 1.2em;'>Una colección de momentos que brillan tanto como tú.<br><i>(Haz clic en las tarjetas para descubrir el mensaje secreto)</i></p>", unsafe_allow_html=True)
+
+with col_header_music:
+    # --- LOGICA DEL REPRODUCTOR DE AUDIO ---
+    # Diccionario de canciones (Nombre : Ruta del archivo MP3 o URL directa)
+    # NOTA: Si subes archivos a github, usa: "nombre_archivo.mp3"
+    playlist = {
+        "🎄 All I Want for Christmas": "https://upload.wikimedia.org/wikipedia/commons/e/e6/Jingle_Bells_-_SpongeBob_Production_Music.ogg", # Ejemplo URL
+        "💑 Nuestra Canción": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3", # Ejemplo URL
+        "✨ Perfect": "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" # Ejemplo URL
+    }
+    
+    song_names = list(playlist.keys())
+
+    # Estado para controlar la canción actual
+    if 'song_index' not in st.session_state:
+        st.session_state.song_index = 0
+
+    def next_song():
+        st.session_state.song_index = (st.session_state.song_index + 1) % len(song_names)
+
+    # Selector de canción
+    selected_song_name = st.selectbox(
+        "🎧 Playlist de Amor",
+        song_names,
+        index=st.session_state.song_index,
+        key='song_select_box'
+    )
+    
+    # Sincronizar selección manual con el estado
+    if selected_song_name != song_names[st.session_state.song_index]:
+        st.session_state.song_index = song_names.index(selected_song_name)
+
+    # Reproductor de AUDIO (Sin video)
+    # format='audio/mp3' es importante
+    st.audio(playlist[selected_song_name], format='audio/mp3')
+
+    # Botón Siguiente (Pequeño y centrado)
+    if st.button("⏭️ Siguiente"):
+        next_song()
+        st.rerun()
 
 st.markdown("---")
 
