@@ -130,7 +130,7 @@ st.markdown("""
     div[data-testid="stImage"] img {
         height: 180px !important;       /* Alto fijo */
         width: 100% !important;         /* Ancho se adapta a la columna */
-        object-fit: cover !important;   /* Recorta la imagen para que no se deforme */
+        object-fit: cover !important;   /* Recorta la imagen */
         border-radius: 10px !important;
         border: 2px solid #D4AF37;      /* Borde dorado */
     }
@@ -140,14 +140,13 @@ st.markdown("""
         height: 180px !important;       /* Mismo alto que la imagen */
         width: 100% !important;
         border-radius: 10px !important;
-        border: 2px dashed #D4AF37 !important; /* Borde punteado para diferenciar */
+        border: 2px dashed #D4AF37 !important; 
         background-color: #2c2c2c !important;
         color: #D4AF37 !important;
-        font-size: 40px !important;     /* Tamaño del emoji ❤️ */
+        font-size: 40px !important;     
         transition: transform 0.2s;
     }
 
-    /* Efecto al pasar el mouse por el botón */
     div[data-testid="stButton"] button:hover {
         transform: scale(1.05);
         border: 2px solid #D4AF37 !important;
@@ -306,10 +305,10 @@ st.markdown("---")
 col_vid1, col_vid2, col_vid3 = st.columns([1, 2, 1])
 
 with col_vid2:
-    st.markdown("<h3 style='margin-bottom: 10px; text-align: center;'>Un poco de nuestra maravillosa historia ❤️</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='margin-bottom: 10px; text-align: center;'>🎥 Nuestro Mensaje de Amor</h3>", unsafe_allow_html=True)
     video_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ" 
     st.video(video_url)
-    st.markdown("<p style='text-align: center; font-size: 0.9em; margin-top: 5px;'>Luego de mucho tiempo, ahí ta:)</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; font-size: 0.9em; margin-top: 5px;'>Dale play al video para ver la dedicatoria visual 🎬</p>", unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -421,8 +420,8 @@ with col9:
 # 🧠 JUEGO DE MEMORIA: NUESTROS RECUERDOS 🧠
 # ==========================================
 
-st.markdown("<br><h3 style='text-align: center; color: #D4AF37;'>🧠 Hora de divertinos y pensar un poco :) 🧠</h3>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; font-size: 0.9em;'>Debes dar la vuelta a las cartas y encontrar los momentos gemelos. Crees poder encontrar todos? Buena suerte:D</p>", unsafe_allow_html=True)
+st.markdown("<br><h3 style='text-align: center; color: #D4AF37;'>🧠 Encuentra los Pares: Nuestros Recuerdos 🧠</h3>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; font-size: 0.9em;'>Dale la vuelta a las cartas y encuentra los momentos gemelos. ¿Podrás desbloquearlos todos?</p>", unsafe_allow_html=True)
 
 # 1. LISTA DE FOTOS PARA EL JUEGO (12 en total)
 all_memory_photos = [
@@ -451,7 +450,6 @@ if 'memory_initialized' not in st.session_state:
     st.session_state.moves = 0
 
 def init_game():
-    # Selección inteligente de fotos no vistas
     unseen = [p for p in all_memory_photos if p not in st.session_state.seen_photos]
     needed = 6
     selection = []
@@ -459,13 +457,11 @@ def init_game():
     if len(unseen) >= needed:
         selection = random.sample(unseen, needed)
     else:
-        # Rellenar con vistas si faltan
         remaining = needed - len(unseen)
         selection = unseen + random.sample(list(st.session_state.seen_photos), remaining)
     
     st.session_state.seen_photos.update(selection)
     
-    # Crear mazo
     deck_images = selection * 2
     random.shuffle(deck_images)
     
@@ -539,7 +535,7 @@ st.markdown("---")
 # 🎞️ CINTA DE FOTOS: TODOS NUESTROS MOMENTOS 🎞️
 # ==========================================
 
-st.markdown("<h3 style='text-align: center; color: #D4AF37; margin-top: 20px; margin-bottom: 0px;'>🎞️ Un viaje por nuestros momentos: un poquito de Roblox :v 🎞️</h3>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center; color: #D4AF37; margin-top: 20px; margin-bottom: 0px;'>🎞️ Un viaje por nuestros momentos 🎞️</h3>", unsafe_allow_html=True)
 
 # 1. LISTA ACTUALIZADA CON TUS FOTOS DE LA CARPETA 'RULETA'
 cinta_imagenes = [
@@ -718,7 +714,35 @@ cinta_html = f"""
 
 st.markdown(cinta_html, unsafe_allow_html=True)
 
+# ==========================================
+# 🔒 CANDADO FINAL: LA ÚLTIMA SORPRESA 🔒
+# ==========================================
+
+st.markdown("<br><br>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center; color: #D4AF37;'>Y como última sorpresa de hoy quisiera darte esto:</h3>", unsafe_allow_html=True)
+
+# Contenedor para centrar el desplegable del candado
+col_pad1, col_pad2, col_pad3 = st.columns([1, 2, 1])
+
+with col_pad2:
+    with st.expander("🔒 Haz clic aquí para abrir el candado secreto"):
+        code = st.text_input("Ingresa la clave secreta:", type="password")
+        st.markdown("<p style='text-align: center; font-style: italic; font-size: 0.8em; color: #888; margin-top: -10px;'>Pista: es una fecha muy especial</p>", unsafe_allow_html=True)
+
+        if code == "2604":
+            st.balloons()
+            # Botón con enlace al Poema (ESTILO BOTÓN DORADO)
+            st.markdown("""
+            <div style='text-align: center; margin-top: 20px;'>
+                <a href="PON_AQUI_TU_LINK_DEL_POEMA" target="_blank" style="background-color: #D4AF37; color: black; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; border-radius: 10px; font-weight: bold; border: 2px solid #fff; box-shadow: 0 0 15px #D4AF37;">
+                    💌 Leer Poema
+                </a>
+            </div>
+            """, unsafe_allow_html=True)
+        elif code:
+            st.error("Esa no es la clave... ¿Quizás el día que empezó todo? ❤️")
+
 # --- PIE DE PÁGINA ---
-st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("<h4 style='text-align: center; color: #D4AF37;'>Para Mariana, con todo mi amor. Miguel ❤️</h4>", unsafe_allow_html=True)
 st.markdown("<br><br>", unsafe_allow_html=True)
