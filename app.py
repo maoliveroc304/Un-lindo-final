@@ -149,9 +149,9 @@ music_player_html = """
     const playlist = [
         { title: "💑 Nuestra Canción Especial", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Kygo%20-%20Firestone%20ft.%20Conrad%20Sewell.mp3" },
         { title: "🐱 Jaja, muchos recuerdos", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Yung%20Kai%20ft%20Oiia%20Cat%20-%20Blue.mp3" },
-        { title: "✨ Siempre te tengo presente", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Sleeping%20With%20Sirens%20-%20James%20Dean%20%26%20Audrey%20Hepburn%20(Acoustic%20version).mp3" }
-        { title: "🕒 Soñemos juntos, por siempre, mi amor", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Amor%20De%20Papel%20-%20Jorge%20Cuellar.mp3" }
-        { title: "🏡 Eres mi hogar", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Edith%20Whiskers%20-%20Home.mp3" }
+        { title: "✨ Siempre te tengo presente", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Sleeping%20With%20Sirens%20-%20James%20Dean%20%26%20Audrey%20Hepburn%20(Acoustic%20version).mp3" },
+        { title: "🕒 Soñemos juntos, por siempre, mi amor", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Amor%20De%20Papel%20-%20Jorge%20Cuellar.mp3" },
+        { title: "🏡 Eres mi hogar", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Edith%20Whiskers%20-%20Home.mp3" },
         { title: "😆 Algo random no cae mal jaja", src: "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/canciones/Party%20Tunes%20%20Brainrot%20Rap.mp3" }
     ];
 
