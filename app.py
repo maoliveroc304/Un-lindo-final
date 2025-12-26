@@ -204,7 +204,7 @@ col_text, col_player = st.columns([3, 1.2])
 
 with col_text:
     st.markdown("<h1>✨ Nuestra Historia: Edición Navidad ✨</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: left; font-size: 1.1em;'>Una colección de momentos que brillan tanto como tú.<br><i>(Haz clic en las fotos para descubrir el mensaje secreto)</i></p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: left; font-size: 1.1em;'>Una colección de momentos que brillan e iluminaron tanto mi corazón, que los recordaré por siempre<3<br><i>(Haz clic en las fotos para descubrir el mensaje secreto)</i></p>", unsafe_allow_html=True)
 
 with col_player:
     # Insertamos el reproductor HTML personalizado
