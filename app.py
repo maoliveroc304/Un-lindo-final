@@ -304,7 +304,7 @@ col1, col2, col3 = st.columns(3)
 with col1:
     st.markdown(crear_tarjeta_html(
         "card1",
-        "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600",
+        "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/Las_canciones.png",
         "Las canciones",
         "Fueron nuestro lenguaje de amor, nuestra forma de demostrar esta hermosa conexión."
     ), unsafe_allow_html=True)
