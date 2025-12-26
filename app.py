@@ -7,6 +7,56 @@ st.set_page_config(
     layout="wide"
 )
 
+# ==========================================
+# 🎵 NUEVO CÓDIGO: REPRODUCTOR EN SIDEBAR 🎵
+# ==========================================
+with st.sidebar:
+    st.header("📻 Playlist de Amor")
+    
+    # 1. Diccionario de canciones (Nombre : Link de YouTube)
+    # ¡Pon aquí las canciones que le gusten a ella!
+    playlist = {
+        "Nuestra Canción Especial": "https://www.youtube.com/watch?v=dQw4w9WgXcQ", 
+        "All I Want for Christmas": "https://www.youtube.com/watch?v=yXQViqx6GMY",
+        "Perfect - Ed Sheeran": "https://www.youtube.com/watch?v=2Vv-BfVoq4g",
+        "Lover - Taylor Swift": "https://www.youtube.com/watch?v=-BjZmE2gtdo"
+    }
+    
+    # Convertimos las claves a una lista para poder navegar por índice
+    song_list = list(playlist.keys())
+
+    # 2. Gestión del Estado (Para que funcione el botón Siguiente)
+    if 'current_song_index' not in st.session_state:
+        st.session_state.current_song_index = 0
+
+    # Función para pasar a la siguiente
+    def next_song():
+        # Si llegamos al final, volvemos al principio (bucle)
+        st.session_state.current_song_index = (st.session_state.current_song_index + 1) % len(song_list)
+
+    # 3. Selector de canción (La lista desplegable)
+    # Vinculamos el selectbox al índice guardado en session_state
+    selected_song = st.selectbox(
+        "Selecciona una canción:",
+        song_list,
+        index=st.session_state.current_song_index,
+        key='song_selector' # Clave interna para que Streamlit sepa cuál es
+    )
+
+    # Actualizamos el índice si el usuario cambia manualmnete la lista
+    if selected_song != song_list[st.session_state.current_song_index]:
+         st.session_state.current_song_index = song_list.index(selected_song)
+
+    # 4. El Reproductor (Muestra el video de la canción seleccionada)
+    st.video(playlist[selected_song])
+
+    # 5. Botón de Siguiente
+    if st.button("⏭️ Siguiente Canción", on_click=next_song):
+        pass # La magia ocurre en la función on_click
+
+    st.markdown("---")
+    st.markdown("*Dedicado para ti, mi amor.*")
+
 # --- CSS PERSONALIZADO (CORREGIDO) ---
 st.markdown("""
 <style>
