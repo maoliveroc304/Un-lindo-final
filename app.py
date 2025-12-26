@@ -727,6 +727,7 @@ col_pad1, col_pad2, col_pad3 = st.columns([1, 2, 1])
 with col_pad2:
     with st.expander("🔒 Haz clic aquí para abrir el candado secreto"):
         code = st.text_input("Ingresa la clave secreta:", type="password")
+        # Pista 1 (Siempre visible)
         st.markdown("<p style='text-align: center; font-style: italic; font-size: 0.8em; color: #888; margin-top: -10px;'>Pista: es una fecha muy especial</p>", unsafe_allow_html=True)
 
         if code == "2604":
@@ -740,7 +741,9 @@ with col_pad2:
             </div>
             """, unsafe_allow_html=True)
         elif code:
+            # Si falla, sale el error y la Pista 2
             st.error("Esa no es la clave... ¿Quizás el día que empezó todo? ❤️")
+            st.warning("Pista 2: Son 4 dígitos :v\n\nNota: Creo que debí indicar esta pista primero xd")
 
 # --- PIE DE PÁGINA ---
 st.markdown("<br><br>", unsafe_allow_html=True)
