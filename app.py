@@ -380,13 +380,12 @@ with col9:
     ), unsafe_allow_html=True)
 
 # ==========================================
-# 🎞️ CINTA DE FOTOS INFINITA (CARRUSEL) 🎞️
+# 🎞️ CINTA DE FOTOS INFINITA (CORREGIDA) 🎞️
 # ==========================================
 
-st.markdown("<br><h3 style='text-align: center;'>🎞️ Un viaje por nuestros momentos 🎞️</h3>", unsafe_allow_html=True)
+st.markdown("<br><h3 style='text-align: center; color: #D4AF37;'>🎞️ Un viaje por nuestros momentos 🎞️</h3>", unsafe_allow_html=True)
 
-# 1. Definimos las fotos para la cinta (Puedes repetir las de arriba o poner nuevas)
-# IMPORTANTE: Reemplaza estos links por los de tu GitHub
+# 1. Lista de Imágenes (Asegúrate de que esta variable exista)
 cinta_imagenes = [
     "https://images.unsplash.com/photo-1529619768328-e37af76c6fe5?w=600",
     "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=600",
@@ -398,14 +397,19 @@ cinta_imagenes = [
     "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600"
 ]
 
-# Generamos el string de las imágenes para HTML (Duplicamos la lista para el efecto infinito)
+# 2. Cálculos en Python (Más seguro que CSS)
+full_list = cinta_imagenes * 2  # Duplicamos para efecto infinito
+cantidad_fotos = len(full_list)
+ancho_foto = 250
+ancho_total_track = cantidad_fotos * ancho_foto  # Ancho total en pixeles
+distancia_scroll = len(cinta_imagenes) * ancho_foto # Cuánto debe moverse para el loop
+
+# 3. Generación HTML de las fotos
 html_imgs = ""
-# Usamos un índice 'global' para que el JS sepa qué foto abrir
-full_list = cinta_imagenes * 2 # Duplicamos para el loop visual
 for i, img_url in enumerate(full_list):
     html_imgs += f'<div class="slide"><img src="{img_url}" onclick="openModal({i})" alt="Foto {i}"></div>'
 
-# Lista JS para que el modal sepa navegar
+# Lista JS para el modal
 js_img_list = str(full_list) 
 
 cinta_html = f"""
@@ -413,41 +417,44 @@ cinta_html = f"""
 <html>
 <head>
 <style>
-    body {{ margin: 0; background: transparent; font-family: 'Montserrat', sans-serif; }}
+    body {{ margin: 0; background-color: transparent; font-family: 'Montserrat', sans-serif; overflow: hidden; }}
     
-    /* 1. CONTENEDOR DEL SLIDER */
+    /* CONTENEDOR PRINCIPAL */
     .slider {{
-        height: 200px;
+        height: 220px;
         margin: auto;
         position: relative;
         width: 100%;
-        display: grid;
-        place-items: center;
+        display: flex;
+        align-items: center;
         overflow: hidden;
     }}
     
+    /* PISTA QUE SE MUEVE */
     .slide-track {{
         display: flex;
-        width: calc(250px * {len(full_list)}); /* Ajuste automático del ancho */
+        width: {ancho_total_track}px; /* Ancho calculado en Python */
         animation: scroll 40s linear infinite;
     }}
     
     .slide-track:hover {{
-        animation-play-state: paused; /* Se detiene al pasar el mouse */
+        animation-play-state: paused;
     }}
     
+    /* ANIMACIÓN */
     @keyframes scroll {{
         0% {{ transform: translateX(0); }}
-        100% {{ transform: translateX(calc(-250px * {len(cinta_imagenes)})); }}
+        100% {{ transform: translateX(-{distancia_scroll}px); }} /* Distancia calculada en Python */
     }}
     
+    /* FOTOS INDIVIDUALES */
     .slide {{
         height: 180px;
-        width: 250px;
+        width: {ancho_foto}px;
         display: flex;
         align-items: center;
         padding: 10px;
-        perspective: 100px;
+        box-sizing: border-box; /* Importante para que el padding no rompa el ancho */
     }}
     
     .slide img {{
@@ -463,9 +470,10 @@ cinta_html = f"""
     
     .slide img:hover {{
         transform: scale(1.1);
+        z-index: 10;
     }}
 
-    /* 2. ESTILOS DEL MODAL (PANTALLA COMPLETA) */
+    /* MODAL (Pantalla Completa dentro del Iframe) */
     .modal {{
         display: none;
         position: fixed;
@@ -474,42 +482,29 @@ cinta_html = f"""
         top: 0;
         width: 100%;
         height: 100%;
-        overflow: auto;
         background-color: rgba(0,0,0,0.95);
-        backdrop-filter: blur(5px);
     }}
 
     .modal-content {{
         margin: auto;
         display: block;
-        width: 80%;
-        max-width: 800px;
-        max-height: 80vh;
-        object-fit: contain;
-        margin-top: 50px;
-        border: 3px solid #D4AF37;
+        max-width: 90%;
+        max-height: 80%;
+        margin-top: 20px;
+        border: 2px solid #D4AF37;
         border-radius: 10px;
         box-shadow: 0 0 20px #D4AF37;
     }}
 
-    /* Botones de navegación */
     .close {{
         position: absolute;
-        top: 15px;
-        right: 35px;
+        top: 10px;
+        right: 25px;
         color: #f1f1f1;
-        font-size: 40px;
+        font-size: 35px;
         font-weight: bold;
-        transition: 0.3s;
         cursor: pointer;
         z-index: 1001;
-    }}
-
-    .close:hover,
-    .close:focus {{
-        color: #D4AF37;
-        text-decoration: none;
-        cursor: pointer;
     }}
 
     .prev, .next {{
@@ -521,23 +516,16 @@ cinta_html = f"""
         margin-top: -50px;
         color: white;
         font-weight: bold;
-        font-size: 30px;
+        font-size: 24px;
         transition: 0.6s ease;
         border-radius: 0 3px 3px 0;
         user-select: none;
-        -webkit-user-select: none;
-        z-index: 1001;
+        background-color: rgba(0,0,0,0.5);
     }}
 
-    .next {{
-        right: 0;
-        border-radius: 3px 0 0 3px;
-    }}
+    .next {{ right: 0; border-radius: 3px 0 0 3px; }}
+    .prev:hover, .next:hover {{ background-color: #D4AF37; color: black; }}
 
-    .prev:hover, .next:hover {{
-        background-color: rgba(212, 175, 55, 0.8); /* Dorado semitransparente */
-        color: black;
-    }}
 </style>
 </head>
 <body>
@@ -556,7 +544,6 @@ cinta_html = f"""
 </div>
 
 <script>
-    // Lista de imágenes traída desde Python
     const images = {js_img_list};
     let currentIndex = 0;
     const modal = document.getElementById("myModal");
@@ -574,18 +561,14 @@ cinta_html = f"""
 
     function changeSlide(n) {{
         currentIndex += n;
-        // Lógica circular (si llega al final, vuelve al inicio)
         if (currentIndex >= images.length) {{ currentIndex = 0; }}
         if (currentIndex < 0) {{ currentIndex = images.length - 1; }}
-        
         modalImg.src = images[currentIndex];
     }}
     
-    // Cerrar si se hace clic fuera de la imagen
+    // Cerrar al hacer clic fuera
     window.onclick = function(event) {{
-        if (event.target == modal) {{
-            closeModal();
-        }}
+        if (event.target == modal) {{ closeModal(); }}
     }}
 </script>
 
@@ -593,13 +576,9 @@ cinta_html = f"""
 </html>
 """
 
-# Insertamos el componente HTML
-# Altura 600px para que cuando se abra el modal (foto grande) quepa bien en el espacio
+# Renderizamos el componente con altura suficiente
+# 600px es para asegurar que cuando abras la foto grande, quepa bien.
 components.html(cinta_html, height=600)
-
-# ==========================================
-# FIN CINTA
-# ==========================================
 
 # --- PIE DE PÁGINA ---
 st.markdown("<br><br>", unsafe_allow_html=True)
