@@ -380,7 +380,7 @@ with col9:
     ), unsafe_allow_html=True)
 
 # ==========================================
-# 🎞️ CINTA DE FOTOS INFINITA (MODO OVERLAY REAL) 🎞️
+# 🎞️ CINTA DE FOTOS (SIN HUECOS + FLOTANTE REAL) 🎞️
 # ==========================================
 
 st.markdown("<br><h3 style='text-align: center; color: #D4AF37;'>🎞️ Un viaje por nuestros momentos 🎞️</h3>", unsafe_allow_html=True)
@@ -397,35 +397,33 @@ cinta_imagenes = [
     "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600"
 ]
 
-# 2. Cálculos en Python
+# 2. Cálculos Python
 full_list = cinta_imagenes * 2
 cantidad_fotos = len(full_list)
 ancho_foto = 250
 ancho_total_track = cantidad_fotos * ancho_foto
 distancia_scroll = len(cinta_imagenes) * ancho_foto
 
-# 3. Generación HTML de las fotos
+# 3. Generar HTML de imágenes
 html_imgs = ""
 for i, img_url in enumerate(full_list):
-    # Nota: onclick llama a una función que definiremos en el script abajo
     html_imgs += f'<div class="slide"><img src="{img_url}" onclick="openModal({i})" alt="Foto {i}"></div>'
 
 js_img_list = str(full_list) 
 
-# 4. Inyección Directa de HTML/CSS/JS
-# Usamos st.markdown con unsafe_allow_html=True para romper la "caja" del iframe
+# 4. Inyección HTML/CSS/JS (TRUCO DEL BODY APPEND)
 cinta_html = f"""
 <style>
-    /* CONTENEDOR PRINCIPAL (Solo ocupa el espacio de la cinta) */
+    /* EL CARRUSEL (Altura fija y pequeña = SIN HUECO NEGRO) */
     .slider {{
-        height: 220px;
+        height: 220px; /* Solo la altura necesaria para las fotos */
         margin: auto;
         position: relative;
         width: 100%;
         display: flex;
         align-items: center;
         overflow: hidden;
-        z-index: 1;
+        margin-bottom: 20px; /* Pequeño margen antes del footer */
     }}
     
     .slide-track {{
@@ -461,33 +459,33 @@ cinta_html = f"""
         border: 2px solid #D4AF37;
     }}
     
-    .slide img:hover {{ transform: scale(1.1); z-index: 10; }}
+    .slide img:hover {{ transform: scale(1.1); }}
 
-    /* --- ESTILOS DEL MODAL FLOTANTE (OVERLAY) --- */
-    /* Position fixed relativo a la VENTANA DEL NAVEGADOR, no al contenedor */
+    /* --- EL MODAL FLOTANTE --- */
     #myModalOverlay {{
-        display: none;
-        position: fixed; /* Esto es la clave */
-        z-index: 999999; /* Por encima de todo Streamlit */
+        display: none; /* Oculto por defecto */
+        position: fixed;
+        z-index: 2147483647; /* Máximo Z-Index posible */
         left: 0;
         top: 0;
-        width: 100vw; /* Ancho completo de la ventana */
-        height: 100vh; /* Alto completo de la ventana */
+        width: 100%;
+        height: 100%;
         background-color: rgba(0,0,0,0.95);
-        backdrop-filter: blur(5px);
+        backdrop-filter: blur(8px);
     }}
 
     .modal-content-img {{
         margin: auto;
         display: block;
         max-width: 90%;
-        max-height: 90vh; /* Para que quepa en pantalla verticalmente */
-        position: relative;
+        max-height: 90%;
+        position: absolute;
         top: 50%;
-        transform: translateY(-50%); /* Centrado vertical perfecto */
+        left: 50%;
+        transform: translate(-50%, -50%); /* Centrado perfecto */
         border: 3px solid #D4AF37;
         border-radius: 10px;
-        box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+        box-shadow: 0 0 40px rgba(212, 175, 55, 0.6);
     }}
 
     .close-btn {{
@@ -498,8 +496,7 @@ cinta_html = f"""
         font-size: 50px;
         font-weight: bold;
         cursor: pointer;
-        z-index: 1000000;
-        text-shadow: 0 0 10px #000;
+        z-index: 2147483648;
     }}
 
     .prev-btn, .next-btn {{
@@ -516,7 +513,7 @@ cinta_html = f"""
         user-select: none;
         background-color: rgba(0,0,0,0.3);
         border-radius: 5px;
-        z-index: 1000000;
+        z-index: 2147483648;
     }}
 
     .next-btn {{ right: 20px; }}
@@ -539,24 +536,26 @@ cinta_html = f"""
 </div>
 
 <script>
-    // Variables globales inyectadas
     var imagesList = {js_img_list};
     var currentIndex = 0;
     var modal = document.getElementById("myModalOverlay");
     var modalImg = document.getElementById("imgExpanded");
 
+    // --- EL TRUCO MAESTRO ---
+    // Movemos el modal al "body" principal del documento para sacarlo de la caja de Streamlit
+    // Esto asegura que flote sobre TODO y no deje huecos.
+    document.body.appendChild(modal);
+
     function openModal(index) {{
         modal.style.display = "block";
         currentIndex = index;
         modalImg.src = imagesList[currentIndex];
-        // Bloquear scroll del fondo
-        document.body.style.overflow = "hidden";
+        document.body.style.overflow = "hidden"; // Bloquear scroll de la página
     }}
 
     function closeModal() {{
         modal.style.display = "none";
-        // Reactivar scroll del fondo
-        document.body.style.overflow = "auto";
+        document.body.style.overflow = "auto"; // Reactivar scroll
     }}
 
     function changeSlide(n) {{
@@ -568,21 +567,17 @@ cinta_html = f"""
     
     // Cerrar con Escape
     document.addEventListener('keydown', function(event) {{
-        if (event.key === "Escape") {{
-            closeModal();
-        }}
+        if (event.key === "Escape") {{ closeModal(); }}
     }});
     
     // Cerrar click fuera
     window.onclick = function(event) {{
-        if (event.target == modal) {{
-            closeModal();
-        }}
+        if (event.target == modal) {{ closeModal(); }}
     }}
 </script>
 """
 
-# IMPORTANTE: Usamos st.markdown en lugar de components.html
+# Renderizamos
 st.markdown(cinta_html, unsafe_allow_html=True)
 
 # --- PIE DE PÁGINA ---
