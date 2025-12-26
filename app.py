@@ -147,9 +147,12 @@ music_player_html = """
 <script>
     // --- LISTA DE CANCIONES (URLs DE EJEMPLO, CAMBIAR POR LAS TUYAS) ---
     const playlist = [
-        { title: "🎄 All I Want for Christmas", src: "https://upload.wikimedia.org/wikipedia/commons/e/e6/Jingle_Bells_-_SpongeBob_Production_Music.ogg" },
-        { title: "💑 Nuestra Canción Especial", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
-        { title: "✨ Perfect - Ed Sheeran", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" }
+        { title: "💑 Nuestra Canción Especial", src: "https://drive.google.com/file/d/1gaW-WNNogonpfjdDAp7qiOVI_-vhIJNQ/view?usp=drive_link" },
+        { title: "🐱 Jaja, muchos recuerdos", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+        { title: "✨ Siempre te tengo presente", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" }
+        { title: "🕒 Soñemos juntos, por siempre, mi amor", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" }
+        { title: "🏡 Eres mi hogar", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" }
+        { title: "😆 Algo random no cae mal jaja", src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" }
     ];
 
     let currentTrack = 0;
