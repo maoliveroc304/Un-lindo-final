@@ -380,10 +380,11 @@ with col9:
     ), unsafe_allow_html=True)
 
 # ==========================================
-# 🎞️ CINTA DE FOTOS (MODO ACORDEÓN / EXPANDIBLE) 🎞️
+# 🎞️ CINTA DE FOTOS (VERSIÓN COMPACTA SIN HUECOS) 🎞️
 # ==========================================
 
-st.markdown("<br><h3 style='text-align: center; color: #D4AF37;'>🎞️ Un viaje por nuestros momentos 🎞️</h3>", unsafe_allow_html=True)
+# Título ajustado sin saltos de línea extra
+st.markdown("<h3 style='text-align: center; color: #D4AF37; margin-top: 20px; margin-bottom: 0px;'>🎞️ Un viaje por nuestros momentos 🎞️</h3>", unsafe_allow_html=True)
 
 # 1. Lista de Imágenes
 cinta_imagenes = [
@@ -404,26 +405,26 @@ ancho_foto = 250
 ancho_total_track = cantidad_fotos * ancho_foto
 distancia_scroll = len(cinta_imagenes) * ancho_foto
 
-# 3. Generar HTML de imágenes para la cinta
+# 3. Generar HTML de imágenes
 html_imgs = ""
 for i, img_url in enumerate(full_list):
     html_imgs += f'<div class="slide"><img src="{img_url}" onclick="expandViewer({i})" alt="Foto {i}"></div>'
 
 js_img_list = str(full_list) 
 
-# 4. Inyección HTML/CSS/JS
+# 4. Código HTML/CSS/JS (Inyección directa flexible)
 cinta_html = f"""
 <style>
-    /* --- ESTILOS DE LA CINTA --- */
+    /* Estilos base de la cinta - Altura ajustada */
     .slider {{
-        height: 200px;
-        margin: auto;
+        height: 180px; /* Altura justa para las fotos */
+        margin: 0 auto;
         position: relative;
         width: 100%;
         display: flex;
         align-items: center;
         overflow: hidden;
-        /* El margen inferior se ajustará dinámicamente */
+        padding: 10px 0; /* Un poco de aire arriba y abajo */
     }}
     
     .slide-track {{
@@ -440,11 +441,11 @@ cinta_html = f"""
     }}
     
     .slide {{
-        height: 180px;
+        height: 150px; /* Fotos un poco más pequeñas para que se vea elegante */
         width: {ancho_foto}px;
         display: flex;
         align-items: center;
-        padding: 10px;
+        padding: 0 10px;
         box-sizing: border-box;
     }}
     
@@ -452,70 +453,71 @@ cinta_html = f"""
         width: 100%;
         height: 100%;
         object-fit: cover;
-        border-radius: 10px;
+        border-radius: 8px;
         cursor: pointer;
-        transition: transform 0.3s;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        border: 2px solid #D4AF37;
+        transition: transform 0.3s, border 0.3s;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        border: 1px solid #D4AF37;
+        opacity: 0.8; /* Un poco transparente hasta que pasas el mouse */
     }}
     
-    .slide img:hover {{ transform: scale(1.1); }}
+    .slide img:hover {{ 
+        transform: scale(1.1); 
+        opacity: 1;
+        border: 2px solid #fff;
+        z-index: 10;
+    }}
 
-    /* --- CONTENEDOR EXPANDIBLE (ACORDEÓN) --- */
+    /* --- CONTENEDOR EXPANDIBLE (CERO ALTURA POR DEFECTO) --- */
     #expandable-container {{
-        display: none; /* OCULTO POR DEFECTO (Cero espacio) */
+        display: none; /* Fundamental: No ocupa espacio si está oculto */
         width: 100%;
-        background-color: #111;
-        border-top: 2px solid #D4AF37;
-        border-bottom: 2px solid #D4AF37;
-        margin-top: 20px;
+        background-color: rgba(0,0,0,0.3);
+        border-top: 1px solid #D4AF37;
+        border-bottom: 1px solid #D4AF37;
+        margin: 10px 0; /* Margen solo cuando aparece */
         position: relative;
         text-align: center;
         padding: 20px 0;
-        transition: all 0.5s ease;
+        transition: height 0.3s ease;
     }}
 
-    /* Imagen Grande */
     #big-image {{
         max-width: 90%;
-        max-height: 500px;
-        border-radius: 10px;
-        box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        max-height: 450px;
+        border-radius: 8px;
+        box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
         display: block;
         margin: 0 auto;
     }}
 
-    /* Botones de control */
+    /* Botones */
     .close-exp {{
         position: absolute;
-        top: 10px;
-        right: 20px;
-        color: #fff;
-        font-size: 30px;
+        top: 5px;
+        right: 15px;
+        color: #ddd;
+        font-size: 24px;
         font-weight: bold;
         cursor: pointer;
-        background: rgba(0,0,0,0.5);
-        padding: 0 10px;
-        border-radius: 5px;
+        z-index: 100;
     }}
-    
     .close-exp:hover {{ color: #D4AF37; }}
 
     .nav-btn {{
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        font-size: 40px;
-        color: white;
+        font-size: 30px;
+        color: rgba(255,255,255,0.7);
         cursor: pointer;
-        background: rgba(0,0,0,0.3);
         padding: 10px;
         user-select: none;
+        transition: 0.2s;
     }}
-    
-    .nav-btn:hover {{ background: #D4AF37; color: black; }}
-    .prev-exp {{ left: 20px; }}
-    .next-exp {{ right: 20px; }}
+    .nav-btn:hover {{ color: #D4AF37; scale: 1.2; }}
+    .prev-exp {{ left: 10px; }}
+    .next-exp {{ right: 10px; }}
 
 </style>
 
@@ -529,7 +531,6 @@ cinta_html = f"""
     <span class="close-exp" onclick="closeViewer()">&times;</span>
     <div class="nav-btn prev-exp" onclick="changeBigImage(-1)">&#10094;</div>
     <div class="nav-btn next-exp" onclick="changeBigImage(1)">&#10095;</div>
-    
     <img id="big-image" src="" alt="Vista Previa">
 </div>
 
@@ -540,19 +541,22 @@ cinta_html = f"""
     var bigImg = document.getElementById("big-image");
 
     function expandViewer(index) {{
-        // 1. Mostrar el contenedor (ocupa espacio físico)
+        // Al hacer clic, cambiamos a BLOCK. 
+        // Solo ahora ocupará espacio vertical y empujará el footer.
         container.style.display = "block";
         
-        // 2. Cargar imagen
         currIdx = index;
         bigImg.src = imgList[currIdx];
         
-        // 3. Desplazamiento suave hacia la imagen para que se vea bien
-        container.scrollIntoView({{behavior: "smooth", block: "center"}});
+        // Pequeño desplazamiento para centrar la atención
+        setTimeout(() => {{
+             container.scrollIntoView({{behavior: "smooth", block: "center"}});
+        }}, 100);
     }}
 
     function closeViewer() {{
-        // Ocultar contenedor (el espacio desaparece)
+        // Al cerrar, volvemos a NONE.
+        // El espacio desaparece instantáneamente.
         container.style.display = "none";
     }}
 
@@ -565,8 +569,10 @@ cinta_html = f"""
 </script>
 """
 
+# IMPORTANTE: Usamos st.markdown, NO components.html
 st.markdown(cinta_html, unsafe_allow_html=True)
 
 # --- PIE DE PÁGINA ---
-st.markdown("<br><br>", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True) # Un solo salto de línea pequeño
 st.markdown("<h4 style='text-align: center; color: #D4AF37;'>Para Mariana, con todo mi amor. Miguel ❤️</h4>", unsafe_allow_html=True)
+st.markdown("<br><br>", unsafe_allow_html=True) # Espacio final
