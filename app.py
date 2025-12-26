@@ -379,6 +379,228 @@ with col9:
         "Gracias por amarme como lo hiciste cada día, y por haberme hecho sentir cómo es amar a alguien con toda el alma."
     ), unsafe_allow_html=True)
 
+# ==========================================
+# 🎞️ CINTA DE FOTOS INFINITA (CARRUSEL) 🎞️
+# ==========================================
+
+st.markdown("<br><h3 style='text-align: center;'>🎞️ Un viaje por nuestros momentos 🎞️</h3>", unsafe_allow_html=True)
+
+# 1. Definimos las fotos para la cinta (Puedes repetir las de arriba o poner nuevas)
+# IMPORTANTE: Reemplaza estos links por los de tu GitHub
+cinta_imagenes = [
+    "https://images.unsplash.com/photo-1529619768328-e37af76c6fe5?w=600",
+    "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=600",
+    "https://images.unsplash.com/photo-1523438885200-e635ba2c371e?w=600",
+    "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=600", 
+    "https://images.unsplash.com/photo-1543589077-47d81606c1bf?w=600",
+    "https://images.unsplash.com/photo-1512474932049-78ac69ede12c?w=600",
+    "https://images.unsplash.com/photo-1623945202652-327c59c5d72a?w=600",
+    "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=600"
+]
+
+# Generamos el string de las imágenes para HTML (Duplicamos la lista para el efecto infinito)
+html_imgs = ""
+# Usamos un índice 'global' para que el JS sepa qué foto abrir
+full_list = cinta_imagenes * 2 # Duplicamos para el loop visual
+for i, img_url in enumerate(full_list):
+    html_imgs += f'<div class="slide"><img src="{img_url}" onclick="openModal({i})" alt="Foto {i}"></div>'
+
+# Lista JS para que el modal sepa navegar
+js_img_list = str(full_list) 
+
+cinta_html = f"""
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    body {{ margin: 0; background: transparent; font-family: 'Montserrat', sans-serif; }}
+    
+    /* 1. CONTENEDOR DEL SLIDER */
+    .slider {{
+        height: 200px;
+        margin: auto;
+        position: relative;
+        width: 100%;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+    }}
+    
+    .slide-track {{
+        display: flex;
+        width: calc(250px * {len(full_list)}); /* Ajuste automático del ancho */
+        animation: scroll 40s linear infinite;
+    }}
+    
+    .slide-track:hover {{
+        animation-play-state: paused; /* Se detiene al pasar el mouse */
+    }}
+    
+    @keyframes scroll {{
+        0% {{ transform: translateX(0); }}
+        100% {{ transform: translateX(calc(-250px * {len(cinta_imagenes)})); }}
+    }}
+    
+    .slide {{
+        height: 180px;
+        width: 250px;
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        perspective: 100px;
+    }}
+    
+    .slide img {{
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: transform 0.3s;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        border: 2px solid #D4AF37;
+    }}
+    
+    .slide img:hover {{
+        transform: scale(1.1);
+    }}
+
+    /* 2. ESTILOS DEL MODAL (PANTALLA COMPLETA) */
+    .modal {{
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.95);
+        backdrop-filter: blur(5px);
+    }}
+
+    .modal-content {{
+        margin: auto;
+        display: block;
+        width: 80%;
+        max-width: 800px;
+        max-height: 80vh;
+        object-fit: contain;
+        margin-top: 50px;
+        border: 3px solid #D4AF37;
+        border-radius: 10px;
+        box-shadow: 0 0 20px #D4AF37;
+    }}
+
+    /* Botones de navegación */
+    .close {{
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        color: #f1f1f1;
+        font-size: 40px;
+        font-weight: bold;
+        transition: 0.3s;
+        cursor: pointer;
+        z-index: 1001;
+    }}
+
+    .close:hover,
+    .close:focus {{
+        color: #D4AF37;
+        text-decoration: none;
+        cursor: pointer;
+    }}
+
+    .prev, .next {{
+        cursor: pointer;
+        position: absolute;
+        top: 50%;
+        width: auto;
+        padding: 16px;
+        margin-top: -50px;
+        color: white;
+        font-weight: bold;
+        font-size: 30px;
+        transition: 0.6s ease;
+        border-radius: 0 3px 3px 0;
+        user-select: none;
+        -webkit-user-select: none;
+        z-index: 1001;
+    }}
+
+    .next {{
+        right: 0;
+        border-radius: 3px 0 0 3px;
+    }}
+
+    .prev:hover, .next:hover {{
+        background-color: rgba(212, 175, 55, 0.8); /* Dorado semitransparente */
+        color: black;
+    }}
+</style>
+</head>
+<body>
+
+<div class="slider">
+    <div class="slide-track">
+        {html_imgs}
+    </div>
+</div>
+
+<div id="myModal" class="modal">
+  <span class="close" onclick="closeModal()">&times;</span>
+  <img class="modal-content" id="img01">
+  <a class="prev" onclick="changeSlide(-1)">&#10094;</a>
+  <a class="next" onclick="changeSlide(1)">&#10095;</a>
+</div>
+
+<script>
+    // Lista de imágenes traída desde Python
+    const images = {js_img_list};
+    let currentIndex = 0;
+    const modal = document.getElementById("myModal");
+    const modalImg = document.getElementById("img01");
+
+    function openModal(index) {{
+        modal.style.display = "block";
+        currentIndex = index;
+        modalImg.src = images[currentIndex];
+    }}
+
+    function closeModal() {{
+        modal.style.display = "none";
+    }}
+
+    function changeSlide(n) {{
+        currentIndex += n;
+        // Lógica circular (si llega al final, vuelve al inicio)
+        if (currentIndex >= images.length) {{ currentIndex = 0; }}
+        if (currentIndex < 0) {{ currentIndex = images.length - 1; }}
+        
+        modalImg.src = images[currentIndex];
+    }}
+    
+    // Cerrar si se hace clic fuera de la imagen
+    window.onclick = function(event) {{
+        if (event.target == modal) {{
+            closeModal();
+        }}
+    }}
+</script>
+
+</body>
+</html>
+"""
+
+# Insertamos el componente HTML
+# Altura 600px para que cuando se abra el modal (foto grande) quepa bien en el espacio
+components.html(cinta_html, height=600)
+
+# ==========================================
+# FIN CINTA
+# ==========================================
+
 # --- PIE DE PÁGINA ---
-st.markdown("<br><br><br>", unsafe_allow_html=True)
+st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("<h4 style='text-align: center; color: #D4AF37;'>Para Mariana, con todo mi amor. Miguel ❤️</h4>", unsafe_allow_html=True)
