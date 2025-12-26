@@ -101,7 +101,6 @@ st.markdown("""
         display: block; 
     }
     
-    /* AQUÍ ESTÁ LA CORRECCIÓN CLAVE */
     .flip-back { 
         background-color: #2c2c2c; 
         color: #D4AF37; 
@@ -111,7 +110,7 @@ st.markdown("""
         flex-direction: column; 
         justify-content: center; 
         align-items: center; 
-        text-align: center; /* <-- ESTO ASEGURA QUE EL TEXTO ESTÉ CENTRADO */
+        text-align: center; 
         padding: 20px; 
         border: 2px solid #D4AF37; 
     }
@@ -122,6 +121,44 @@ st.markdown("""
         flex-direction: column;
         justify-content: center;
     }
+
+    /* ========================================== */
+    /* 🧠 ESTILOS ESPECÍFICOS PARA JUEGO DE MEMORIA 🧠 */
+    /* ========================================== */
+    
+    /* 1. Forzar que las IMÁGENES (Cartas boca arriba) sean del mismo tamaño */
+    div[data-testid="stImage"] img {
+        height: 180px !important;       /* Alto fijo */
+        width: 100% !important;         /* Ancho se adapta a la columna */
+        object-fit: cover !important;   /* Recorta la imagen para que no se deforme */
+        border-radius: 10px !important;
+        border: 2px solid #D4AF37;      /* Borde dorado */
+    }
+
+    /* 2. Forzar que los BOTONES (Cartas boca abajo) sean del mismo tamaño */
+    div[data-testid="stButton"] button {
+        height: 180px !important;       /* Mismo alto que la imagen */
+        width: 100% !important;
+        border-radius: 10px !important;
+        border: 2px dashed #D4AF37 !important; /* Borde punteado para diferenciar */
+        background-color: #2c2c2c !important;
+        color: #D4AF37 !important;
+        font-size: 40px !important;     /* Tamaño del emoji ❤️ */
+        transition: transform 0.2s;
+    }
+
+    /* Efecto al pasar el mouse por el botón */
+    div[data-testid="stButton"] button:hover {
+        transform: scale(1.05);
+        border: 2px solid #D4AF37 !important;
+        background-color: #3e2b2b !important;
+    }
+    
+    /* Ajustar el espaciado de las columnas del juego */
+    div[data-testid="stVerticalBlock"] > div {
+        gap: 1rem;
+    }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -281,7 +318,6 @@ st.markdown("<br>", unsafe_allow_html=True)
 # ==========================================
 
 def crear_tarjeta_html(id_unico, imagen_url, titulo, descripcion):
-    # HE AGREGADO text-align: center EXPLÍCITAMENTE EN EL H3 Y EL P TAMBIÉN POR SEGURIDAD
     return f"""
     <div style="margin-top: 20px; margin-bottom: 20px;">
         <input type="checkbox" id="{id_unico}">
@@ -388,8 +424,7 @@ with col9:
 st.markdown("<br><h3 style='text-align: center; color: #D4AF37;'>🧠 Encuentra los Pares: Nuestros Recuerdos 🧠</h3>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; font-size: 0.9em;'>Dale la vuelta a las cartas y encuentra los momentos gemelos. ¿Podrás desbloquearlos todos?</p>", unsafe_allow_html=True)
 
-# 1. DEFINICIÓN DE TODAS LAS FOTOS DEL JUEGO (12 FOTOS TOTALES)
-# Basado en tus archivos de la carpeta /memoria
+# 1. LISTA DE FOTOS PARA EL JUEGO (12 en total)
 all_memory_photos = [
     "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/1.jpg",
     "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/2.jpg",
@@ -397,45 +432,40 @@ all_memory_photos = [
     "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/4.jpg",
     "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/5.jpg",
     "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/6.jpg",
-    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/7.png", # OJO: Es PNG
-    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/8.png", # OJO: Es PNG
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/7.png",
+    "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/8.png",
     "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/9.jpg",
     "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/10.jpg",
     "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/11.jpg",
     "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/memoria/12.jpg"
 ]
 
-# 2. INICIALIZACIÓN DE ESTADO (Session State)
+# 2. INICIALIZACIÓN DEL ESTADO DEL JUEGO
 if 'memory_initialized' not in st.session_state:
     st.session_state.memory_initialized = True
-    st.session_state.seen_photos = set() # Para rastrear qué fotos ya vio
+    st.session_state.seen_photos = set()
     st.session_state.game_over = False
     st.session_state.current_deck = []
-    st.session_state.flipped = [] # Cartas volteadas temporalmente
-    st.session_state.matched = set() # Cartas ya encontradas (IDs)
+    st.session_state.flipped = []
+    st.session_state.matched = set()
     st.session_state.moves = 0
 
-# Función para iniciar/reiniciar juego
 def init_game():
-    # Seleccionamos 6 fotos para esta ronda
-    # Prioridad: Fotos que NO se han visto
+    # Selección inteligente de fotos no vistas
     unseen = [p for p in all_memory_photos if p not in st.session_state.seen_photos]
-    
     needed = 6
     selection = []
     
-    # Si hay suficientes no vistas, las usamos
     if len(unseen) >= needed:
         selection = random.sample(unseen, needed)
     else:
-        # Si faltan, rellenamos con las ya vistas
-        selection = unseen + random.sample(list(st.session_state.seen_photos), needed - len(unseen))
+        # Rellenar con vistas si faltan
+        remaining = needed - len(unseen)
+        selection = unseen + random.sample(list(st.session_state.seen_photos), remaining)
     
-    # Marcar estas como vistas
     st.session_state.seen_photos.update(selection)
     
-    # Crear el mazo (duplicar y barajar)
-    # Cada carta es un dict: {id, url}
+    # Crear mazo
     deck_images = selection * 2
     random.shuffle(deck_images)
     
@@ -445,81 +475,63 @@ def init_game():
     st.session_state.moves = 0
     st.session_state.game_over = False
 
-# Si no hay mazo, crearlo
 if not st.session_state.current_deck:
     init_game()
 
-# 3. LÓGICA DE JUEGO
 def handle_click(card_id):
-    # Si ya hay 2 volteadas y no son pares, resetearlas al hacer click en la tercera
     if len(st.session_state.flipped) == 2:
         st.session_state.flipped = []
     
-    # Voltear la carta actual
     st.session_state.flipped.append(card_id)
     
-    # Chequear coincidencia
     if len(st.session_state.flipped) == 2:
         st.session_state.moves += 1
         id1 = st.session_state.flipped[0]
         id2 = st.session_state.flipped[1]
         
-        # Buscar las URLs correspondientes
         url1 = next(c['url'] for c in st.session_state.current_deck if c['id'] == id1)
         url2 = next(c['url'] for c in st.session_state.current_deck if c['id'] == id2)
         
         if url1 == url2:
             st.session_state.matched.add(id1)
             st.session_state.matched.add(id2)
-            st.session_state.flipped = [] # Limpiar volteadas porque ya son matched
+            st.session_state.flipped = []
             
-            # Verificar Victoria
             if len(st.session_state.matched) == len(st.session_state.current_deck):
                 st.session_state.game_over = True
-                st.balloons() # ¡Efecto de celebración!
+                st.balloons()
 
-# 4. INTERFAZ VISUAL (GRILLA)
-# Botón de reinicio manual
+# 3. INTERFAZ DEL JUEGO
 col_info1, col_info2 = st.columns([3, 1])
 with col_info1:
-    # Mensaje de progreso
     if len(st.session_state.seen_photos) < len(all_memory_photos):
         st.caption(f"🕵️‍♂️ Aún quedan fotos nuevas por descubrir... ({len(st.session_state.seen_photos)}/{len(all_memory_photos)} vistas)")
     else:
-        st.caption("✨ ¡Ya has desbloqueado todos los recuerdos de la colección!")
+        st.caption("✨ ¡Ya has desbloqueado todos los recuerdos!")
 
 with col_info2:
-    if st.button("🔄 Barajar de nuevo"):
+    if st.button("🔄 Barajar"):
         init_game()
         st.rerun()
 
 if st.session_state.game_over:
-    st.success(f"¡Ganaste! 🎉 Lo hiciste en {st.session_state.moves} intentos. Reiniciando con nuevas fotos...")
-    time.sleep(3) # Espera 3 segundos para celebrar
+    st.success(f"¡Ganaste! 🎉 Intentos: {st.session_state.moves}. Reiniciando...")
+    time.sleep(3)
     init_game()
     st.rerun()
 
-# Renderizado de las cartas
-# Usamos columnas de 4 en 4 (Grid 4x3 para 12 cartas)
 cols = st.columns(4)
 for i, card in enumerate(st.session_state.current_deck):
-    # Definir qué mostrar
     is_flipped = card['id'] in st.session_state.flipped
     is_matched = card['id'] in st.session_state.matched
     
     with cols[i % 4]:
-        container = st.container()
         if is_flipped or is_matched:
-            # MOSTRAR FOTO
             st.image(card['url'], use_container_width=True)
         else:
-            # MOSTRAR DORSO (BOTÓN)
-            # Usamos un botón que ocupa todo el ancho
             if st.button("❤️", key=f"btn_{card['id']}", use_container_width=True):
                 handle_click(card['id'])
                 st.rerun()
-        
-        st.write("") # Espaciador vertical pequeño
 
 st.markdown("---")
 
@@ -529,7 +541,7 @@ st.markdown("---")
 
 st.markdown("<h3 style='text-align: center; color: #D4AF37; margin-top: 20px; margin-bottom: 0px;'>🎞️ Un viaje por nuestros momentos 🎞️</h3>", unsafe_allow_html=True)
 
-# LISTA ACTUALIZADA CON TUS FOTOS DE LA CARPETA 'RULETA' (GITHUB RAW)
+# 1. LISTA ACTUALIZADA CON TUS FOTOS DE LA CARPETA 'RULETA'
 cinta_imagenes = [
     "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/ruleta/R1.png",
     "https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/ruleta/R2.png",
@@ -560,16 +572,15 @@ js_img_list = str(full_list)
 # 4. Código HTML/CSS/JS (Inyección directa flexible)
 cinta_html = f"""
 <style>
-    /* Estilos base de la cinta - Altura ajustada */
     .slider {{
-        height: 180px; /* Altura justa para las fotos */
+        height: 180px;
         margin: 0 auto;
         position: relative;
         width: 100%;
         display: flex;
         align-items: center;
         overflow: hidden;
-        padding: 10px 0; /* Un poco de aire arriba y abajo */
+        padding: 10px 0;
     }}
     
     .slide-track {{
@@ -586,7 +597,7 @@ cinta_html = f"""
     }}
     
     .slide {{
-        height: 150px; /* Fotos un poco más pequeñas para que se vea elegante */
+        height: 150px;
         width: {ancho_foto}px;
         display: flex;
         align-items: center;
@@ -603,7 +614,7 @@ cinta_html = f"""
         transition: transform 0.3s, border 0.3s;
         box-shadow: 0 2px 4px rgba(0,0,0,0.5);
         border: 1px solid #D4AF37;
-        opacity: 0.8; /* Un poco transparente hasta que pasas el mouse */
+        opacity: 0.8;
     }}
     
     .slide img:hover {{ 
@@ -615,12 +626,12 @@ cinta_html = f"""
 
     /* --- CONTENEDOR EXPANDIBLE (CERO ALTURA POR DEFECTO) --- */
     #expandable-container {{
-        display: none; /* Fundamental: No ocupa espacio si está oculto */
+        display: none;
         width: 100%;
         background-color: rgba(0,0,0,0.3);
         border-top: 1px solid #D4AF37;
         border-bottom: 1px solid #D4AF37;
-        margin: 10px 0; /* Margen solo cuando aparece */
+        margin: 10px 0;
         position: relative;
         text-align: center;
         padding: 20px 0;
@@ -636,7 +647,6 @@ cinta_html = f"""
         margin: 0 auto;
     }}
 
-    /* Botones */
     .close-exp {{
         position: absolute;
         top: 5px;
@@ -663,7 +673,6 @@ cinta_html = f"""
     .nav-btn:hover {{ color: #D4AF37; scale: 1.2; }}
     .prev-exp {{ left: 10px; }}
     .next-exp {{ right: 10px; }}
-
 </style>
 
 <div class="slider">
@@ -686,22 +695,15 @@ cinta_html = f"""
     var bigImg = document.getElementById("big-image");
 
     function expandViewer(index) {{
-        // Al hacer clic, cambiamos a BLOCK. 
-        // Solo ahora ocupará espacio vertical y empujará el footer.
         container.style.display = "block";
-        
         currIdx = index;
         bigImg.src = imgList[currIdx];
-        
-        // Pequeño desplazamiento para centrar la atención
         setTimeout(() => {{
              container.scrollIntoView({{behavior: "smooth", block: "center"}});
         }}, 100);
     }}
 
     function closeViewer() {{
-        // Al cerrar, volvemos a NONE.
-        // El espacio desaparece instantáneamente.
         container.style.display = "none";
     }}
 
@@ -714,10 +716,9 @@ cinta_html = f"""
 </script>
 """
 
-# IMPORTANTE: Usamos st.markdown, NO components.html
 st.markdown(cinta_html, unsafe_allow_html=True)
 
 # --- PIE DE PÁGINA ---
-st.markdown("<br>", unsafe_allow_html=True) # Un solo salto de línea pequeño
+st.markdown("<br>", unsafe_allow_html=True)
 st.markdown("<h4 style='text-align: center; color: #D4AF37;'>Para Mariana, con todo mi amor. Miguel ❤️</h4>", unsafe_allow_html=True)
-st.markdown("<br><br>", unsafe_allow_html=True) # Espacio final
+st.markdown("<br><br>", unsafe_allow_html=True)
