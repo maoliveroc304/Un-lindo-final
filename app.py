@@ -7,7 +7,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- CSS PERSONALIZADO ---
+# --- CSS PERSONALIZADO (CORREGIDO) ---
 st.markdown("""
 <style>
     /* 1. ESTILOS GENERALES */
@@ -46,7 +46,7 @@ st.markdown("""
         display: none;
     }
 
-    /* Contenedor principal de la tarjeta */
+    /* Contenedor Label */
     .card-container {
         perspective: 1000px;
         width: 300px;
@@ -54,9 +54,11 @@ st.markdown("""
         margin: auto;
         margin-bottom: 30px;
         cursor: pointer;
+        display: block; /* Asegura que se comporte como bloque */
+        position: relative;
     }
 
-    /* El label actúa como el disparador del clic */
+    /* El cuerpo que gira */
     .card-flip-inner {
         position: relative;
         width: 100%;
@@ -88,18 +90,17 @@ st.markdown("""
         100% { transform: translate(1px, -2px) rotate(-1deg); }
     }
 
-    /* Aplicar temblor al hacer hover sobre el contenedor, PERO NO si ya está girada */
+    /* Temblor al pasar mouse (solo si no está girada) */
     .card-container:hover .card-flip-inner {
         animation: shake 0.5s;
         animation-iteration-count: infinite;
     }
     
-    /* Si el input está checked (girado), quitamos la animación de temblor para leer tranquilos */
     input:checked + .card-container:hover .card-flip-inner {
         animation: none;
     }
 
-    /* CARAS DE LA TARJETA */
+    /* CARAS DE LA TARJETA - CORRECCIÓN DE VISIBILIDAD */
     .flip-front, .flip-back {
         position: absolute;
         width: 100%;
@@ -107,11 +108,16 @@ st.markdown("""
         -webkit-backface-visibility: hidden;
         backface-visibility: hidden;
         border-radius: 15px;
+        top: 0;
+        left: 0;
     }
 
+    /* FRENTE (FOTO) */
     .flip-front {
-        background-color: #bbb;
+        background-color: #222; /* Fondo por si la imagen tarda */
         color: black;
+        z-index: 2; /* IMPORTANTE: Esto fuerza a la foto a estar ARRIBA */
+        transform: rotateY(0deg);
     }
 
     .flip-front img {
@@ -119,12 +125,15 @@ st.markdown("""
         height: 100%;
         object-fit: cover;
         border-radius: 15px;
+        display: block; /* Asegura que la imagen ocupe el espacio */
     }
 
+    /* DORSO (TEXTO) */
     .flip-back {
         background-color: #2c2c2c;
         color: #D4AF37;
         transform: rotateY(180deg);
+        z-index: 1; /* Está debajo inicialmente */
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -133,16 +142,6 @@ st.markdown("""
         border: 2px solid #D4AF37;
     }
     
-    /* ESTILOS EXTRA PARA VIDEO */
-    .video-container {
-        border: 2px solid #D4AF37;
-        border-radius: 10px;
-        padding: 5px;
-        background: #000;
-        box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
-        margin-bottom: 40px;
-    }
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -161,22 +160,21 @@ st.markdown("<h1>✨ Nuestra Historia: Edición Navidad ✨</h1>", unsafe_allow_
 st.markdown("<p style='text-align: center;'>Una colección de momentos que brillan tanto como tú.<br><i>(Haz clic en las fotos para descubrir el mensaje secreto)</i></p>", unsafe_allow_html=True)
 
 # --- SECCIÓN DE VIDEO ---
-col_vid1, col_vid2, col_vid3 = st.columns([1, 2, 1]) # Columnas para centrar el video
+col_vid1, col_vid2, col_vid3 = st.columns([1, 2, 1]) 
 
 with col_vid2:
     st.markdown("<h3 style='margin-bottom: 10px;'>🎥 Nuestro Mensaje de Amor</h3>", unsafe_allow_html=True)
-    # CAMBIA ESTE LINK POR EL DE TU VIDEO DE YOUTUBE O UN ARCHIVO LOCAL
+    # IMPORTANTE: Reemplaza este link por tu video real
     video_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ" 
     st.video(video_url)
     st.markdown("<p style='text-align: center; font-size: 0.9em;'>Dale play para ambientar nuestra historia 🎵</p>", unsafe_allow_html=True)
 
 st.markdown("---")
 
-# --- FUNCIÓN GENERADORA DE TARJETAS (NUEVA LÓGICA) ---
+# --- FUNCIÓN GENERADORA DE TARJETAS (HACK CHECKBOX) ---
 def crear_tarjeta_html(id_unico, imagen_url, titulo, descripcion):
-    # Usamos un ID único para conectar el input con el label
     return f"""
-    <div style="margin-top: 20px;">
+    <div style="margin-top: 20px; margin-bottom: 20px;">
         <input type="checkbox" id="{id_unico}">
         <label class="card-container" for="{id_unico}">
             <div class="card-flip-inner">
@@ -199,7 +197,7 @@ col1, col2, col3 = st.columns(3)
 with col1:
     st.markdown(crear_tarjeta_html(
         "card1",
-        "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=600", # Cena
+        "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=600",
         "Nuestra Primera Cena",
         "¿Recuerdas que se nos quemó el postre? Pero igual fue la noche perfecta."
     ), unsafe_allow_html=True)
@@ -207,7 +205,7 @@ with col1:
 with col2:
     st.markdown(crear_tarjeta_html(
         "card2",
-        "https://images.unsplash.com/photo-1543589077-47d81606c1bf?w=600", # Regalo/Viaje
+        "https://images.unsplash.com/photo-1543589077-47d81606c1bf?w=600",
         "Ese Viaje Inolvidable",
         "Tú, yo y ese atardecer que parecía pintado. No necesito más regalos."
     ), unsafe_allow_html=True)
@@ -215,19 +213,18 @@ with col2:
 with col3:
     st.markdown(crear_tarjeta_html(
         "card3",
-        "https://images.unsplash.com/photo-1512474932049-78ac69ede12c?w=600", # Navidad
+        "https://images.unsplash.com/photo-1512474932049-78ac69ede12c?w=600",
         "Tu Sonrisa",
         "El adorno más bonito de todas mis Navidades. Gracias por hacerme feliz."
     ), unsafe_allow_html=True)
 
-# --- FILA 2 (NUEVA) ---
-st.markdown("<br>", unsafe_allow_html=True) # Espacio entre filas
+# --- FILA 2 ---
 col4, col5, col6 = st.columns(3)
 
 with col4:
     st.markdown(crear_tarjeta_html(
         "card4",
-        "https://images.unsplash.com/photo-1513297887119-d46091b24bfa?w=600", # Nieve/Paseo
+        "https://images.unsplash.com/photo-1513297887119-d46091b24bfa?w=600",
         "Paseo de Luces",
         "Caminar de la mano contigo hace que cualquier calle parezca mágica."
     ), unsafe_allow_html=True)
@@ -235,7 +232,7 @@ with col4:
 with col5:
     st.markdown(crear_tarjeta_html(
         "card5",
-        "https://images.unsplash.com/photo-1520697830682-bbb6e85e2b0b?w=600", # Año Nuevo
+        "https://images.unsplash.com/photo-1520697830682-bbb6e85e2b0b?w=600",
         "Deseos de Año Nuevo",
         "Mi único deseo para el próximo año es seguir construyendo esto contigo."
     ), unsafe_allow_html=True)
@@ -243,11 +240,10 @@ with col5:
 with col6:
     st.markdown(crear_tarjeta_html(
         "card6",
-        "https://images.unsplash.com/photo-1482517967863-00e15c9b80fb?w=600", # Galletas/Café
+        "https://images.unsplash.com/photo-1482517967863-00e15c9b80fb?w=600",
         "Tardes de Café",
         "Esos momentos simples donde solo hablamos y reímos son mis favoritos."
     ), unsafe_allow_html=True)
-
 
 # --- PIE DE PÁGINA ---
 st.markdown("<br><br><br>", unsafe_allow_html=True)
