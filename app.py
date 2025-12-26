@@ -736,7 +736,7 @@ with col_pad2:
             st.markdown("""
             <div style='text-align: center; margin-top: 20px;'>
                 <a href="PON_AQUI_TU_LINK_DEL_POEMA" target="_blank" style="background-color: #D4AF37; color: black; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; border-radius: 10px; font-weight: bold; border: 2px solid #fff; box-shadow: 0 0 15px #D4AF37;">
-                    💌 Leer Poema
+                    💌 Abrir 💌
                 </a>
             </div>
             """, unsafe_allow_html=True)
