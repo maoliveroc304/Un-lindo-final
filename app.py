@@ -7,52 +7,57 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- CSS PERSONALIZADO (LA MAGIA VISUAL) ---
-# Aquí definimos las animaciones (temblor) y el efecto 3D (giro)
+# --- CSS PERSONALIZADO ---
 st.markdown("""
 <style>
-    /* 1. FONDO Y TIPOGRAFÍA */
+    /* 1. ESTILOS GENERALES */
     .stApp {
-        background-color: #1a1515; /* Fondo oscuro tipo chocolate amargo */
+        background-color: #1a1515;
         background-image: radial-gradient(#3e2b2b 1px, transparent 1px);
         background-size: 20px 20px;
     }
     
     h1, h2, h3 {
-        color: #D4AF37 !important; /* Dorado elegante */
+        color: #D4AF37 !important;
         font-family: 'Playfair Display', serif;
         text-align: center;
     }
     
-    p {
+    p, div {
         color: #E0E0E0;
         font-family: 'Montserrat', sans-serif;
     }
 
-    /* 2. EFECTO DE NIEVE (CSS PURO) */
+    /* 2. EFECTO DE NIEVE */
     .snowflake {
         color: #fff;
         font-size: 1em;
         font-family: Arial;
         text-shadow: 0 0 1px #000;
     }
-    
     @-webkit-keyframes snowflakes-fall{0%{top:-10%}100%{top:100%}}
     @-webkit-keyframes snowflakes-shake{0%{-webkit-transform:translateX(0px);transform:translateX(0px)}50%{-webkit-transform:translateX(80px);transform:translateX(80px)}100%{-webkit-transform:translateX(0px);transform:translateX(0px)}}
     .snowflake{position:fixed;top:-10%;z-index:9999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;cursor:default;-webkit-animation-name:snowflakes-fall,snowflakes-shake;-webkit-animation-duration:10s,3s;-webkit-animation-timing-function:linear,ease-in-out;-webkit-animation-iteration-count:infinite,infinite;-webkit-animation-play-state:running,running}.snowflake:nth-of-type(0){left:1%;-webkit-animation-delay:0s,0s}.snowflake:nth-of-type(1){left:10%;-webkit-animation-delay:1s,1s}.snowflake:nth-of-type(2){left:20%;-webkit-animation-delay:6s,.5s}.snowflake:nth-of-type(3){left:30%;-webkit-animation-delay:4s,2s}.snowflake:nth-of-type(4){left:40%;-webkit-animation-delay:2s,2s}.snowflake:nth-of-type(5){left:50%;-webkit-animation-delay:8s,3s}.snowflake:nth-of-type(6){left:60%;-webkit-animation-delay:6s,2s}.snowflake:nth-of-type(7){left:70%;-webkit-animation-delay:2.5s,1s}.snowflake:nth-of-type(8){left:80%;-webkit-animation-delay:1s,0s}.snowflake:nth-of-type(9){left:90%;-webkit-animation-delay:3s,1.5s}
 
-    /* 3. CONTENEDOR DE LA TARJETA (FLIP CARD) */
-    .flip-card {
-        background-color: transparent;
-        width: 300px;
-        height: 400px;
-        perspective: 1000px; /* Necesario para el efecto 3D */
-        margin: auto;
-        margin-bottom: 30px;
+    /* 3. FLIP CARD CON CHECKBOX HACK */
+    
+    /* Ocultamos el checkbox real */
+    input[type=checkbox] {
+        display: none;
     }
 
-    /* Contenedor interior que agrupa frente y dorso */
-    .flip-card-inner {
+    /* Contenedor principal de la tarjeta */
+    .card-container {
+        perspective: 1000px;
+        width: 300px;
+        height: 400px;
+        margin: auto;
+        margin-bottom: 30px;
+        cursor: pointer;
+    }
+
+    /* El label actúa como el disparador del clic */
+    .card-flip-inner {
         position: relative;
         width: 100%;
         height: 100%;
@@ -63,7 +68,12 @@ st.markdown("""
         border-radius: 15px;
     }
 
-    /* ANIMACIÓN 1: TEMBLOR CÓMICO AL PASAR EL MOUSE (HOVER) */
+    /* ESTADO: CUANDO EL CHECKBOX ESTÁ MARCADO (CLIC) -> GIRAR */
+    input:checked + .card-container .card-flip-inner {
+        transform: rotateY(180deg);
+    }
+
+    /* ANIMACIÓN DE TEMBLOR (SOLO SI NO ESTÁ GIRADA) */
     @keyframes shake {
         0% { transform: translate(1px, 1px) rotate(0deg); }
         10% { transform: translate(-1px, -2px) rotate(-1deg); }
@@ -78,21 +88,19 @@ st.markdown("""
         100% { transform: translate(1px, -2px) rotate(-1deg); }
     }
 
-    .flip-card:hover .flip-card-inner {
-        animation: shake 0.5s; /* Aplica el temblor */
-        animation-iteration-count: infinite; /* Tiembla por siempre mientras esté el mouse */
-        cursor: pointer;
+    /* Aplicar temblor al hacer hover sobre el contenedor, PERO NO si ya está girada */
+    .card-container:hover .card-flip-inner {
+        animation: shake 0.5s;
+        animation-iteration-count: infinite;
+    }
+    
+    /* Si el input está checked (girado), quitamos la animación de temblor para leer tranquilos */
+    input:checked + .card-container:hover .card-flip-inner {
+        animation: none;
     }
 
-    /* ANIMACIÓN 2: GIRAR AL HACER CLIC (ACTIVE) */
-    /* Usamos la pseudoclase :active para simular el clic mantenido */
-    .flip-card:active .flip-card-inner {
-        transform: rotateY(180deg);
-        animation: none; /* Detiene el temblor al girar */
-    }
-
-    /* Cara frontal y trasera */
-    .flip-card-front, .flip-card-back {
+    /* CARAS DE LA TARJETA */
+    .flip-front, .flip-back {
         position: absolute;
         width: 100%;
         height: 100%;
@@ -101,23 +109,21 @@ st.markdown("""
         border-radius: 15px;
     }
 
-    /* Estilo del Frente (Imagen) */
-    .flip-card-front {
+    .flip-front {
         background-color: #bbb;
         color: black;
     }
-    
-    .flip-card-front img {
+
+    .flip-front img {
         width: 100%;
         height: 100%;
         object-fit: cover;
         border-radius: 15px;
     }
 
-    /* Estilo del Dorso (Texto) */
-    .flip-card-back {
-        background-color: #2c2c2c; /* Gris oscuro elegante */
-        color: #D4AF37; /* Letras doradas */
+    .flip-back {
+        background-color: #2c2c2c;
+        color: #D4AF37;
         transform: rotateY(180deg);
         display: flex;
         flex-direction: column;
@@ -126,74 +132,122 @@ st.markdown("""
         padding: 20px;
         border: 2px solid #D4AF37;
     }
+    
+    /* ESTILOS EXTRA PARA VIDEO */
+    .video-container {
+        border: 2px solid #D4AF37;
+        border-radius: 10px;
+        padding: 5px;
+        background: #000;
+        box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        margin-bottom: 40px;
+    }
 
 </style>
 """, unsafe_allow_html=True)
 
-# --- EFECTO DE NIEVE HTML ---
+# --- EFECTO NIEVE ---
 st.markdown("""
 <div class="snowflakes" aria-hidden="true">
-  <div class="snowflake">❅</div><div class="snowflake">❅</div>
-  <div class="snowflake">❆</div><div class="snowflake">❄</div>
-  <div class="snowflake">❅</div><div class="snowflake">❆</div>
-  <div class="snowflake">❄</div><div class="snowflake">❅</div>
-  <div class="snowflake">❆</div><div class="snowflake">❄</div>
+  <div class="snowflake">❅</div><div class="snowflake">❅</div><div class="snowflake">❆</div>
+  <div class="snowflake">❄</div><div class="snowflake">❅</div><div class="snowflake">❆</div>
+  <div class="snowflake">❄</div><div class="snowflake">❅</div><div class="snowflake">❆</div>
+  <div class="snowflake">❄</div>
 </div>
 """, unsafe_allow_html=True)
 
-# --- CABECERA ---
+# --- TÍTULO PRINCIPAL ---
 st.markdown("<h1>✨ Nuestra Historia: Edición Navidad ✨</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center;'>Una colección de momentos que brillan tanto como tú.<br><i>(Pasa el mouse para verlas temblar de emoción, mantén presionado el clic para revelar el secreto)</i></p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center;'>Una colección de momentos que brillan tanto como tú.<br><i>(Haz clic en las fotos para descubrir el mensaje secreto)</i></p>", unsafe_allow_html=True)
+
+# --- SECCIÓN DE VIDEO ---
+col_vid1, col_vid2, col_vid3 = st.columns([1, 2, 1]) # Columnas para centrar el video
+
+with col_vid2:
+    st.markdown("<h3 style='margin-bottom: 10px;'>🎥 Nuestro Mensaje de Amor</h3>", unsafe_allow_html=True)
+    # CAMBIA ESTE LINK POR EL DE TU VIDEO DE YOUTUBE O UN ARCHIVO LOCAL
+    video_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ" 
+    st.video(video_url)
+    st.markdown("<p style='text-align: center; font-size: 0.9em;'>Dale play para ambientar nuestra historia 🎵</p>", unsafe_allow_html=True)
+
 st.markdown("---")
 
-# --- FUNCIÓN PARA CREAR TARJETAS ---
-def crear_tarjeta_html(imagen_url, titulo, descripcion):
+# --- FUNCIÓN GENERADORA DE TARJETAS (NUEVA LÓGICA) ---
+def crear_tarjeta_html(id_unico, imagen_url, titulo, descripcion):
+    # Usamos un ID único para conectar el input con el label
     return f"""
-    <div class="flip-card">
-      <div class="flip-card-inner">
-        <div class="flip-card-front">
-          <img src="{imagen_url}" alt="Foto">
-        </div>
-        <div class="flip-card-back">
-          <h3>{titulo}</h3>
-          <p>{descripcion}</p>
-          <p>❤️</p>
-        </div>
-      </div>
+    <div style="margin-top: 20px;">
+        <input type="checkbox" id="{id_unico}">
+        <label class="card-container" for="{id_unico}">
+            <div class="card-flip-inner">
+                <div class="flip-front">
+                    <img src="{imagen_url}" alt="Foto">
+                </div>
+                <div class="flip-back">
+                    <h3>{titulo}</h3>
+                    <p>{descripcion}</p>
+                    <p>❤️</p>
+                </div>
+            </div>
+        </label>
     </div>
     """
 
-# --- GRILLA DE FOTOS ---
-# Usamos columnas de Streamlit para organizar las tarjetas
+# --- FILA 1 ---
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    # Tarjeta 1
-    # Nota: Puedes cambiar estas URL por fotos reales subidas a tu GitHub o Imgur
-    html_card = crear_tarjeta_html(
-        "https://images.unsplash.com/photo-1511895426328-dc8714191300?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+    st.markdown(crear_tarjeta_html(
+        "card1",
+        "https://images.unsplash.com/photo-1511895426328-dc8714191300?w=600", # Cena
         "Nuestra Primera Cena",
-        "¿Recuerdas que se nos quemó el postre? Pero igual fue la noche perfecta porque estaba contigo."
-    )
-    st.markdown(html_card, unsafe_allow_html=True)
+        "¿Recuerdas que se nos quemó el postre? Pero igual fue la noche perfecta."
+    ), unsafe_allow_html=True)
 
 with col2:
-    # Tarjeta 2
-    html_card = crear_tarjeta_html(
-        "https://images.unsplash.com/photo-1543589077-47d81606c1bf?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+    st.markdown(crear_tarjeta_html(
+        "card2",
+        "https://images.unsplash.com/photo-1543589077-47d81606c1bf?w=600", # Regalo/Viaje
         "Ese Viaje Inolvidable",
-        "Tú, yo y ese atardecer que parecía pintado. No necesito más regalos esta Navidad."
-    )
-    st.markdown(html_card, unsafe_allow_html=True)
+        "Tú, yo y ese atardecer que parecía pintado. No necesito más regalos."
+    ), unsafe_allow_html=True)
 
 with col3:
-    # Tarjeta 3
-    html_card = crear_tarjeta_html(
-        "https://images.unsplash.com/photo-1512474932049-78ac69ede12c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+    st.markdown(crear_tarjeta_html(
+        "card3",
+        "https://images.unsplash.com/photo-1512474932049-78ac69ede12c?w=600", # Navidad
         "Tu Sonrisa",
-        "El adorno más bonito de todas mis Navidades. Gracias por hacerme tan feliz cada mes."
-    )
-    st.markdown(html_card, unsafe_allow_html=True)
+        "El adorno más bonito de todas mis Navidades. Gracias por hacerme feliz."
+    ), unsafe_allow_html=True)
+
+# --- FILA 2 (NUEVA) ---
+st.markdown("<br>", unsafe_allow_html=True) # Espacio entre filas
+col4, col5, col6 = st.columns(3)
+
+with col4:
+    st.markdown(crear_tarjeta_html(
+        "card4",
+        "https://images.unsplash.com/photo-1513297887119-d46091b24bfa?w=600", # Nieve/Paseo
+        "Paseo de Luces",
+        "Caminar de la mano contigo hace que cualquier calle parezca mágica."
+    ), unsafe_allow_html=True)
+
+with col5:
+    st.markdown(crear_tarjeta_html(
+        "card5",
+        "https://images.unsplash.com/photo-1520697830682-bbb6e85e2b0b?w=600", # Año Nuevo
+        "Deseos de Año Nuevo",
+        "Mi único deseo para el próximo año es seguir construyendo esto contigo."
+    ), unsafe_allow_html=True)
+
+with col6:
+    st.markdown(crear_tarjeta_html(
+        "card6",
+        "https://images.unsplash.com/photo-1482517967863-00e15c9b80fb?w=600", # Galletas/Café
+        "Tardes de Café",
+        "Esos momentos simples donde solo hablamos y reímos son mis favoritos."
+    ), unsafe_allow_html=True)
+
 
 # --- PIE DE PÁGINA ---
 st.markdown("<br><br><br>", unsafe_allow_html=True)
