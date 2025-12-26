@@ -306,10 +306,10 @@ st.markdown("---")
 col_vid1, col_vid2, col_vid3 = st.columns([1, 2, 1])
 
 with col_vid2:
-    st.markdown("<h3 style='margin-bottom: 10px; text-align: center;'>🎥 Nuestro Mensaje de Amor</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='margin-bottom: 10px; text-align: center;'>Un poco de nuestra maravillosa historia</h3>", unsafe_allow_html=True)
     video_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ" 
     st.video(video_url)
-    st.markdown("<p style='text-align: center; font-size: 0.9em; margin-top: 5px;'>Dale play al video para ver la dedicatoria visual 🎬</p>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: center; font-size: 0.9em; margin-top: 5px;'>Luego de mucho tiempo, ahí ta:)</p>", unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
@@ -421,7 +421,7 @@ with col9:
 # 🧠 JUEGO DE MEMORIA: NUESTROS RECUERDOS 🧠
 # ==========================================
 
-st.markdown("<br><h3 style='text-align: center; color: #D4AF37;'>🧠 Hora de divertinos y pensa un poco :) 🧠</h3>", unsafe_allow_html=True)
+st.markdown("<br><h3 style='text-align: center; color: #D4AF37;'>🧠 Hora de divertinos y pensar un poco :) 🧠</h3>", unsafe_allow_html=True)
 st.markdown("<p style='text-align: center; font-size: 0.9em;'>Debes dar la vuelta a las cartas y encontrar los momentos gemelos. Crees poder encontrar todos? Buena suerte:D</p>", unsafe_allow_html=True)
 
 # 1. LISTA DE FOTOS PARA EL JUEGO (12 en total)
@@ -539,7 +539,7 @@ st.markdown("---")
 # 🎞️ CINTA DE FOTOS: TODOS NUESTROS MOMENTOS 🎞️
 # ==========================================
 
-st.markdown("<h3 style='text-align: center; color: #D4AF37; margin-top: 20px; margin-bottom: 0px;'>🎞️ Un viaje por nuestros momentos 🎞️</h3>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center; color: #D4AF37; margin-top: 20px; margin-bottom: 0px;'>🎞️ Un viaje por nuestros momentos: un poquito de Roblox :v 🎞️</h3>", unsafe_allow_html=True)
 
 # 1. LISTA ACTUALIZADA CON TUS FOTOS DE LA CARPETA 'RULETA'
 cinta_imagenes = [
