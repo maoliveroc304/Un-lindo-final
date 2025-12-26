@@ -535,7 +535,7 @@ st.markdown("---")
 # 🎞️ CINTA DE FOTOS: TODOS NUESTROS MOMENTOS 🎞️
 # ==========================================
 
-st.markdown("<h3 style='text-align: center; color: #D4AF37; margin-top: 20px; margin-bottom: 0px;'>🎞️ Un viaje por nuestros momentos 🎞️</h3>", unsafe_allow_html=True)
+st.markdown("<h3 style='text-align: center; color: #D4AF37; margin-top: 20px; margin-bottom: 0px;'>🎞️ Un viaje por nuestros momentos: un poquito de Roblox :v 🎞️</h3>", unsafe_allow_html=True)
 
 # 1. LISTA ACTUALIZADA CON TUS FOTOS DE LA CARPETA 'RULETA'
 cinta_imagenes = [
