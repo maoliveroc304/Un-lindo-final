@@ -158,15 +158,6 @@ st.markdown("""
         gap: 1rem;
     }
 
-</style>
-""", unsafe_allow_html=True)
-
-/* ... (resto de tus estilos anteriores) ... */
-
-    div[data-testid="stVerticalBlock"] > div {
-        gap: 1rem;
-    }
-
     /* ========================================== */
     /* NUEVO: ESTILO PARA LOS GIFS FIJOS CON FONDO NEGRO */
     /* ========================================== */
@@ -185,7 +176,7 @@ st.markdown("""
     .gif-fixed-box img {
         width: 100%;
         height: 100%;
-        object-fit: contain; /* LA CLAVE: Ajusta la imagen dentro sin estirarla, dejando bandas negras si es necesario */
+        object-fit: contain; /* LA CLAVE: Ajusta la imagen dentro sin estirarla */
     }
 
 </style>
