@@ -331,7 +331,7 @@ col_vid1, col_vid2, col_vid3 = st.columns([1, 2, 1])
 
 with col_vid2:
     st.markdown("<h3 style='margin-bottom: 10px; text-align: center;'>Un maravilloso viaje por nuestros recuerdos ❤️</h3>", unsafe_allow_html=True)
-    video_url = "https://www.youtube.com/watch?v=dQw4w9WgXcQ" 
+    video_url = "https://youtu.be/6EcTS9VVdeI" 
     st.video(video_url)
     st.markdown("<p style='text-align: center; font-size: 0.9em; margin-top: 5px;'>Tomó su buen tiempo, pero ahí ta:)</p>", unsafe_allow_html=True)
 
