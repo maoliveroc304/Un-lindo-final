@@ -773,4 +773,3 @@ with col_pad2:
 # --- PIE DE PÁGINA ---
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("<h4 style='text-align: center; color: #D4AF37;'>Para Mariana, con todo mi amor. Miguel ❤️</h4>", unsafe_allow_html=True)
-st.markdown("<br><br>", unsafe_allow_html=True)
