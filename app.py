@@ -746,18 +746,32 @@ st.markdown(cinta_html, unsafe_allow_html=True)
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("<h3 style='text-align: center; color: #D4AF37;'>Y como última sorpresa de hoy quisiera darte esto:</h3>", unsafe_allow_html=True)
 
-# Contenedor para centrar el desplegable del candado
+# Creamos 3 columnas: Izquierda (Gifs), Centro (Candado), Derecha (Gifs)
 col_pad1, col_pad2, col_pad3 = st.columns([1, 2, 1])
 
+# LOGICA DEL CANDADO (CENTRO)
 with col_pad2:
     with st.expander("🔒 Haz clic aquí para abrir el candado secreto"):
         code = st.text_input("Ingresa la clave secreta:", type="password")
-        # Pista 1 (Siempre visible)
         st.markdown("<p style='text-align: center; font-style: italic; font-size: 0.8em; color: #888; margin-top: -10px;'>Pista: es una fecha muy especial</p>", unsafe_allow_html=True)
 
         if code == "2604":
             st.balloons()
-            # Botón con enlace al Poema (ESTILO BOTÓN DORADO)
+            
+            # --- ¡FIESTA DE GIFS EN LOS LATERALES! ---
+            # Columna Izquierda
+            with col_pad1:
+                st.image("https://media.giphy.com/media/StKiS6x698JAl9d6Tp/giphy.gif") # Minion Party
+                st.markdown("<br>", unsafe_allow_html=True) # Espacio
+                st.image("https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif") # Gato Bailando
+                
+            # Columna Derecha
+            with col_pad3:
+                st.image("https://media.giphy.com/media/pa37AAGzKXoek/giphy.gif") # Baile gracioso
+                st.markdown("<br>", unsafe_allow_html=True) # Espacio
+                st.image("https://media.giphy.com/media/nNxT5qXR02FOM/giphy.gif") # Perro emocionado
+
+            # BOTÓN DORADO DEL POEMA (CENTRO)
             st.markdown("""
             <div style='text-align: center; margin-top: 20px;'>
                 <a href="PON_AQUI_TU_LINK_DEL_POEMA" target="_blank" style="background-color: #D4AF37; color: black; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; border-radius: 10px; font-weight: bold; border: 2px solid #fff; box-shadow: 0 0 15px #D4AF37;">
@@ -765,8 +779,8 @@ with col_pad2:
                 </a>
             </div>
             """, unsafe_allow_html=True)
+            
         elif code:
-            # Si falla, sale el error y la Pista 2
             st.error("Esa no es la clave... ¿Quizás el día que empezó todo? ❤️")
             st.warning("Pista 2: Son 4 dígitos :v\n\nNota: Creo que debí indicar esta pista primero xd")
 
