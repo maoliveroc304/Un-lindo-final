@@ -161,6 +161,36 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+/* ... (resto de tus estilos anteriores) ... */
+
+    div[data-testid="stVerticalBlock"] > div {
+        gap: 1rem;
+    }
+
+    /* ========================================== */
+    /* NUEVO: ESTILO PARA LOS GIFS FIJOS CON FONDO NEGRO */
+    /* ========================================== */
+    .gif-fixed-box {
+        width: 100%;         /* Ocupa el ancho de su columna */
+        height: 180px;       /* ALTURA FIJA (igual que las cartas) */
+        background-color: #000; /* Fondo NEGRO para las bandas */
+        display: flex;
+        justify-content: center; /* Centrado horizontal */
+        align-items: center;     /* Centrado vertical */
+        border-radius: 10px;     /* Bordes redondeados */
+        border: 2px solid #D4AF37; /* Borde dorado elegante */
+        overflow: hidden;        /* Recorta si algo sobresale */
+    }
+
+    .gif-fixed-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain; /* LA CLAVE: Ajusta la imagen dentro sin estirarla, dejando bandas negras si es necesario */
+    }
+
+</style>
+""", unsafe_allow_html=True)
+
 # --- HTML DEL REPRODUCTOR PERSONALIZADO (CON TEXTO EN MOVIMIENTO) ---
 music_player_html = """
 <!DOCTYPE html>
@@ -746,32 +776,39 @@ st.markdown(cinta_html, unsafe_allow_html=True)
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("<h3 style='text-align: center; color: #D4AF37;'>Y como última sorpresa de hoy quisiera darte esto:</h3>", unsafe_allow_html=True)
 
-# Creamos 3 columnas: Izquierda (Gifs), Centro (Candado), Derecha (Gifs)
+# Contenedor para centrar el desplegable del candado
 col_pad1, col_pad2, col_pad3 = st.columns([1, 2, 1])
 
-# LOGICA DEL CANDADO (CENTRO)
 with col_pad2:
     with st.expander("🔒 Haz clic aquí para abrir el candado secreto"):
         code = st.text_input("Ingresa la clave secreta:", type="password")
+        # Pista 1 (Siempre visible)
         st.markdown("<p style='text-align: center; font-style: italic; font-size: 0.8em; color: #888; margin-top: -10px;'>Pista: es una fecha muy especial</p>", unsafe_allow_html=True)
 
         if code == "2604":
             st.balloons()
+
+            # --- ¡FIESTA DE GIFS EN LOS LATERALES CON MEDIDA FIJA! ---
+            # Usamos HTML directo para aplicar el estilo de "caja fija con fondo negro"
             
-            # --- ¡FIESTA DE GIFS EN LOS LATERALES! ---
             # Columna Izquierda
             with col_pad1:
-                st.image("https://media.giphy.com/media/StKiS6x698JAl9d6Tp/giphy.gif") # Minion Party
-                st.markdown("<br>", unsafe_allow_html=True) # Espacio
-                st.image("https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif") # Gato Bailando
+                st.markdown("""
+                    <div class="gif-fixed-box"><img src="https://media.giphy.com/media/StKiS6x698JAl9d6Tp/giphy.gif"></div>
+                    <br>
+                    <div class="gif-fixed-box"><img src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif"></div>
+                """, unsafe_allow_html=True)
                 
             # Columna Derecha
             with col_pad3:
-                st.image("https://media.giphy.com/media/pa37AAGzKXoek/giphy.gif") # Baile gracioso
-                st.markdown("<br>", unsafe_allow_html=True) # Espacio
-                st.image("https://media.giphy.com/media/nNxT5qXR02FOM/giphy.gif") # Perro emocionado
+                st.markdown("""
+                    <div class="gif-fixed-box"><img src="https://media.giphy.com/media/pa37AAGzKXoek/giphy.gif"></div>
+                    <br>
+                    <div class="gif-fixed-box"><img src="https://media.giphy.com/media/nNxT5qXR02FOM/giphy.gif"></div>
+                """, unsafe_allow_html=True)
 
-            # BOTÓN DORADO DEL POEMA (CENTRO)
+            # Botón con enlace al Poema (ESTILO BOTÓN DORADO)
+            # IMPORTANTE: CAMBIA "PON_AQUI_TU_LINK_DEL_POEMA" POR TU LINK DE DRIVE
             st.markdown("""
             <div style='text-align: center; margin-top: 20px;'>
                 <a href="PON_AQUI_TU_LINK_DEL_POEMA" target="_blank" style="background-color: #D4AF37; color: black; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; border-radius: 10px; font-weight: bold; border: 2px solid #fff; box-shadow: 0 0 15px #D4AF37;">
@@ -779,8 +816,8 @@ with col_pad2:
                 </a>
             </div>
             """, unsafe_allow_html=True)
-            
         elif code:
+            # Si falla, sale el error y la Pista 2
             st.error("Esa no es la clave... ¿Quizás el día que empezó todo? ❤️")
             st.warning("Pista 2: Son 4 dígitos :v\n\nNota: Creo que debí indicar esta pista primero xd")
 
