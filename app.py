@@ -785,17 +785,17 @@ with col_pad2:
             # Columna Izquierda
             with col_pad1:
                 st.markdown("""
-                    <div class="gif-fixed-box"><img src="https://media.giphy.com/media/StKiS6x698JAl9d6Tp/giphy.gif"></div>
+                    <div class="gif-fixed-box"><img src="https://imgflip.com/gif/73a63v"></div>
                     <br>
-                    <div class="gif-fixed-box"><img src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif"></div>
+                    <div class="gif-fixed-box"><img src="https://tenor.com/es-419/view/catgroove-cat-groove-cat-dance-cat-dancing-dancing-gif-10331714073708183100"></div>
                 """, unsafe_allow_html=True)
                 
             # Columna Derecha
             with col_pad3:
                 st.markdown("""
-                    <div class="gif-fixed-box"><img src="https://media.giphy.com/media/pa37AAGzKXoek/giphy.gif"></div>
+                    <div class="gif-fixed-box"><img src="https://tenor.com/es-419/view/anna-blue-annabiue-applecatrun-offliners-anasul-gif-21908563"></div>
                     <br>
-                    <div class="gif-fixed-box"><img src="https://media.giphy.com/media/nNxT5qXR02FOM/giphy.gif"></div>
+                    <div class="gif-fixed-box"><img src="https://tenor.com/es-419/view/cat-gangnam-style-gangnam-oppa-gangnam-style-danc-gif-5156314622067612837"></div>
                 """, unsafe_allow_html=True)
 
             # Botón con enlace al Poema (ESTILO BOTÓN DORADO)
