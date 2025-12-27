@@ -802,7 +802,7 @@ with col_pad2:
             # IMPORTANTE: CAMBIA "PON_AQUI_TU_LINK_DEL_POEMA" POR TU LINK DE DRIVE
             st.markdown("""
             <div style='text-align: center; margin-top: 20px;'>
-                <a href="https://drive.google.com/file/d/1MeyHMMjvL2TgZnjgdb7ZGIds9sBrQZma/view?usp=drive_link" target="_blank" style="background-color: #D4AF37; color: black; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; border-radius: 10px; font-weight: bold; border: 2px solid #fff; box-shadow: 0 0 15px #D4AF37;">
+                <a href="https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/documento/Confianza%2C%20fe%20y%20amor.pdf" target="_blank" style="background-color: #D4AF37; color: black; padding: 15px 32px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; border-radius: 10px; font-weight: bold; border: 2px solid #fff; box-shadow: 0 0 15px #D4AF37;">
                     💌 Abrir 💌
                 </a>
             </div>
