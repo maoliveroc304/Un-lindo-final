@@ -795,7 +795,7 @@ with col_pad2:
                 st.markdown("""
                     <div class="gif-fixed-box"><img src="https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/gifs/gato3.gif"></div>
                     <br>
-                    <div class="gif-fixed-box"><https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/gifs/gato5.gif"></div>
+                    <div class="gif-fixed-box"><img src="https://raw.githubusercontent.com/maoliveroc304/Un-lindo-final/main/fotos/gifs/gato5.gif"></div>
                 """, unsafe_allow_html=True)
 
             # Botón con enlace al Poema (ESTILO BOTÓN DORADO)
